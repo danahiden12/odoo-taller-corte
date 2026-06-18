@@ -60,3 +60,14 @@ taller_corte/
 
 └── ir.model.access.csv
 
+## Instalación
+
+1. Clonar este repositorio en la carpeta `custom-addons` de tu instalación de Odoo
+2. Reiniciar Odoo con `--addons-path=addons,custom-addons`
+3. Activar modo desarrollador
+4. Instalar el módulo desde Aplicaciones
+
+## Autora
+
+**Dana Hiden** — Analista de Procesos y Datos | Supply Chain & Operaciones
+[LinkedIn](https://www.linkedin.com/in/danahiden)
