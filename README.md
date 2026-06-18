@@ -36,19 +36,29 @@ Ingreso Corte → Molderia Digital → En Corte → Cortado/Control → Entregad
 
 ## Estructura del módulo
 
-odoo-taller-corte/
-└── taller_corte/
-    ├── __init__.py
-    ├── __manifest__.py
-    ├── models/
-    │   ├── __init__.py
-    │   └── orden_corte.py
-    ├── views/
-    │   └── orden_corte_views.xml
-    ├── reports/
-    │   └── reporte_corte.xml
-    └── security/
-        └── ir.model.access.csv
+taller_corte/
+
+├── init.py
+
+├── manifest.py
+
+├── models/
+
+│   ├── init.py
+
+│   └── orden_corte.py
+
+├── views/
+
+│   └── orden_corte_views.xml
+
+├── reports/
+
+│   └── reporte_corte.xml
+
+└── security/
+
+└── ir.model.access.csv
 
 ## Instalación
 
