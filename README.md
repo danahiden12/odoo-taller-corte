@@ -4,7 +4,7 @@ Módulo personalizado desarrollado en Odoo 17 Community para la gestión
 de órdenes de corte de un taller de indumentaria.
 
 ## 📹 Demo en video
-[Ver demo completa en Drive](TU_LINK_DE_DRIVE)
+[Ver demo completa en Drive](https://drive.google.com/file/d/1UGDdYbDyVdBCwyGB05hy_4Wyx5i6A3K3/view?usp=sharing)
 
 ## ¿Qué hace este módulo?
 
@@ -70,4 +70,4 @@ taller_corte/
 ## Autora
 
 **Dana Hiden** — Analista de Procesos y Datos | Supply Chain & Operaciones
-[LinkedIn](https://www.linkedin.com/in/danahiden)
+[LinkedIn](https://www.linkedin.com/in/danahiden)        
