@@ -23,3 +23,40 @@ seguimiento manual en papel.
 - Generación de hoja de corte en PDF con un solo clic
 
 ## Etapas del Kanban
+
+Ingreso Corte → Molderia Digital → En Corte → Cortado/Control → Entregado
+
+## Stack tecnológico
+
+- Odoo 17 Community Edition
+- Python 3.12
+- XML (vistas QWeb)
+- PostgreSQL 15
+- wkhtmltopdf 0.12.6
+
+## Estructura del módulo
+
+taller_corte/
+
+├── init.py
+
+├── manifest.py
+
+├── models/
+
+│   ├── init.py
+
+│   └── orden_corte.py
+
+├── views/
+
+│   └── orden_corte_views.xml
+
+├── reports/
+
+│   └── reporte_corte.xml
+
+└── security/
+
+└── ir.model.access.csv
+
