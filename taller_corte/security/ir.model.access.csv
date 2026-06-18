@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_taller_orden_corte,taller.orden.corte,model_taller_orden_corte,,1,1,1,1
+access_taller_linea_talle,taller.linea.talle,model_taller_linea_talle,,1,1,1,1
+access_taller_linea_tizada,taller.linea.tizada,model_taller_linea_tizada,,1,1,1,1
