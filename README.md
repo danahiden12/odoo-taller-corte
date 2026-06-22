@@ -8,9 +8,9 @@ de órdenes de corte de un taller de indumentaria.
 
 ## Capturas
 
-![Tablero Kanban](https://drive.google.com/file/d/1UGDdYbDyVdBCwyGB05hy_4Wyx5i6A3K3/view?usp=sharing)
+[Tablero Kanban](https://docs.google.com/presentation/d/1a1E5nCD8DrxradPdkdzeK1H5WJX6595P2i-d6xggnuk/edit?usp=sharing)
 
-![Hoja de Corte PDF](https://drive.google.com/file/d/10v-2Fq0zHm7b88y41oW9UQ9eAjrbdRXx/view?usp=drive_link)
+[Hoja de Corte PDF](https://drive.google.com/file/d/10v-2Fq0zHm7b88y41oW9UQ9eAjrbdRXx/view?usp=drive_link)
 
 ## ¿Qué hace este módulo?
 
