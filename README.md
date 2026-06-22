@@ -6,6 +6,11 @@ de órdenes de corte de un taller de indumentaria.
 ## 📹 Demo en video
 [Ver demo completa en Drive](https://drive.google.com/file/d/1UGDdYbDyVdBCwyGB05hy_4Wyx5i6A3K3/view?usp=sharing)
 
+## Capturas
+
+![Tablero Kanban](https://docs.google.com/presentation/d/1a1E5nCD8DrxradPdkdzeK1H5WJX6595P2i-d6xggnuk/edit?slide=id.p#slide=id.p)
+![Hoja de Corte PDF](https://drive.google.com/drive/u/0/folders/1tfJ3bLRHdne5PhHbD4DhkTJ1XLy5_Z_h)
+
 ## ¿Qué hace este módulo?
 
 Digitaliza el flujo de producción de un taller de corte mediante un 
