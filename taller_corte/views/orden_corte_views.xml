@@ -13,14 +13,14 @@
                 group_create="false"
                 group_delete="false">
 
-            <progressbar field="estado"
-                         colors='{
-                             "ingreso": "info",
-                             "molderia": "warning",
-                             "en_corte": "danger",
-                             "control": "warning",
-                             "entregado": "success"
-                         }'/>
+           <progressbar field="estado"
+             colors='{
+                 "ingreso": "200",
+                 "molderia": "200",
+                 "en_corte": "200",
+                 "control": "200",
+                 "entregado": "200"
+             }'/>
 
             <field name="name"/>
             <field name="molderia"/>
@@ -207,8 +207,23 @@
 <record id="action_orden_corte" model="ir.actions.act_window">
     <field name="name">Órdenes de Corte</field>
     <field name="res_model">taller.orden.corte</field>
-    <field name="view_mode">kanban,list,form</field>
+    <field name="view_mode">kanban,list,form,calendar,pivot,graph</field>
     <field name="context">{'default_estado': 'ingreso'}</field>
+</record>
+
+<record id="view_orden_corte_calendar" model="ir.ui.view">
+    <field name="name">taller.orden.corte.calendar</field>
+    <field name="model">taller.orden.corte</field>
+    <field name="arch" type="xml">
+        <calendar string="Órdenes de Corte"
+                  date_start="fecha_entrega"
+                  color="estado"
+                  mode="month">
+            <field name="name"/>
+            <field name="cliente_id"/>
+            <field name="cantidad_total"/>
+        </calendar>
+    </field>
 </record>
 
 <menuitem id="menu_taller_corte_root"
