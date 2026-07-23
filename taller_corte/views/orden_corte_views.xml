@@ -17,6 +17,7 @@
              colors='{
                  "ingreso": "200",
                  "molderia": "200",
+                 "tizada": "200",
                  "en_corte": "200",
                  "control": "200",
                  "entregado": "200"
@@ -109,12 +110,21 @@
     <field name="model">taller.orden.corte</field>
     <field name="arch" type="xml">
         <form>
-            <header>
-                <field name="estado"
-                       widget="statusbar"
-                       statusbar_visible="ingreso,molderia,en_corte,control,entregado"
-                       options="{'clickable': 1}"/>
-            </header>
+           <header>
+                    <button name="action_molderia"  string="→ Moldería"  type="object" class="btn-secondary"
+                        invisible="estado != 'ingreso'"/>
+                    <button name="action_tizada"    string="→ Tizada"    type="object" class="btn-secondary"
+                        invisible="estado != 'molderia'"/>
+                    <button name="action_en_corte"  string="→ En Corte"  type="object" class="btn-secondary"
+                        invisible="estado != 'tizada'"/>
+                    <button name="action_control"   string="→ Control"   type="object" class="btn-secondary"
+                        invisible="estado != 'en_corte'"/>
+                    <button name="action_entregado" string="Entregar"    type="object" class="btn-primary"
+                        invisible="estado != 'control'"/>
+                    <field name="estado" widget="statusbar"
+                        statusbar_visible="ingreso,molderia,tizada,en_corte,control,entregado"
+                        options="{'clickable': 1}"/>
+</header>
             <sheet>
                 <group>
                     <group string="Datos de la Orden">
@@ -136,13 +146,11 @@
                 <notebook>
 
                     <page string="Talles y Cantidades">
-                        <field name="lineas_talle_ids">
-                            <tree editable="bottom"
-                                  decoration-muted="cantidad == 0"
-                                  limit="30">
-                                <field name="talle" string="Talle"/>
-                                <field name="color_tela" string="Color"/>
-                                <field name="cantidad" string="Cantidad"/>
+                        <field name="lineas_talle_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="talle"/>
+                                <field name="color_tela"/>
+                                <field name="cantidad"/>
                             </tree>
                         </field>
                         <group>

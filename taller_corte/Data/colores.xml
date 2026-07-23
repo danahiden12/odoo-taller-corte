@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="color_negro"    model="taller.color.tela"><field name="name">Negro</field></record>
+    <record id="color_blanco"   model="taller.color.tela"><field name="name">Blanco</field></record>
+    <record id="color_beige"    model="taller.color.tela"><field name="name">Beige</field></record>
+    <record id="color_azul"     model="taller.color.tela"><field name="name">Azul</field></record>
+    <record id="color_rojo"     model="taller.color.tela"><field name="name">Rojo</field></record>
+    <record id="color_violeta"  model="taller.color.tela"><field name="name">Violeta</field></record>
+    <record id="color_amarillo" model="taller.color.tela"><field name="name">Amarillo</field></record>
+    <record id="color_verde"    model="taller.color.tela"><field name="name">Verde</field></record>
+</odoo>

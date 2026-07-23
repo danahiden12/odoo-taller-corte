@@ -1,6 +1,14 @@
 from odoo import models, fields, api
 
 
+class ColorTela(models.Model):
+    _name = 'taller.color.tela'
+    _description = 'Color de Tela'
+    _order = 'name'
+
+    name = fields.Char(string='Color', required=True)
+
+
 class LineaTalle(models.Model):
     _name = 'taller.linea.talle'
     _description = 'Línea de Talle'
@@ -41,9 +49,9 @@ class LineaTalle(models.Model):
         default=0
     )
 
-    color_tela = fields.Char(
-        string='Color',
-        help='Ej: negro, blanco, rojo'
+    color_tela = fields.Many2one(
+        'taller.color.tela',
+        string='Color'
     )
 
 
@@ -109,18 +117,14 @@ class OrdenCorte(models.Model):
 
     @api.model
     def _read_group_estado(self, estados, domain, order):
-        """
-        Fuerza el orden de las columnas del Kanban.
-        Sin esto Odoo las ordena alfabéticamente.
-        """
-        return ['ingreso', 'molderia', 'en_corte', 'control', 'entregado']
+        return ['ingreso', 'molderia', 'tizada', 'en_corte', 'control', 'entregado']
 
     name = fields.Char(
-    string='N° de Orden',
-    required=True,
-    copy=False,
-    tracking=True
-)
+        string='N° de Orden',
+        required=True,
+        copy=False,
+        tracking=True
+    )
 
     molderia = fields.Char(
         string='Moldería',
@@ -196,6 +200,7 @@ class OrdenCorte(models.Model):
     estado = fields.Selection([
         ('ingreso',   'Ingreso Corte'),
         ('molderia',  'Moldería Digital'),
+        ('tizada',    'Tizada'),
         ('en_corte',  'En Corte'),
         ('control',   'Cortado / Control'),
         ('entregado', 'Entregado'),
@@ -206,25 +211,24 @@ class OrdenCorte(models.Model):
         group_expand='_read_group_estado'
     )
 
-# ── MÉTODOS DE CAMBIO DE ESTADO ─────────────────
+    color = fields.Integer(string='Color')
+
+    # ── MÉTODOS DE CAMBIO DE ESTADO ─────────────────
+
     def action_molderia(self):
-        # mueve la orden a Moldería Digital
         self.estado = 'molderia'
 
+    def action_tizada(self):
+        self.estado = 'tizada'
+
     def action_en_corte(self):
-        # mueve la orden a En Corte
         self.estado = 'en_corte'
 
     def action_control(self):
-        # mueve la orden a Cortado/Control
         self.estado = 'control'
 
     def action_entregado(self):
-        # mueve la orden a Entregado
         self.estado = 'entregado'
 
     def action_ingreso(self):
-        # vuelve la orden a Ingreso (por si hay que corregir)
         self.estado = 'ingreso'
-
-    color = fields.Integer(string='Color')

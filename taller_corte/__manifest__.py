@@ -9,9 +9,11 @@
     'depends': [
         'base',
         'mail',
+        'web',
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/colores.xml',
         'views/orden_corte_views.xml',
         'reports/reporte_corte.xml',
     ],
