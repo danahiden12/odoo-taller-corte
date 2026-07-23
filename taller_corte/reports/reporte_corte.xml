@@ -130,7 +130,7 @@
                             <t t-esc="dict(linea._fields['talle'].selection).get(linea.talle, linea.talle)"/>
                         </td>
                         <td style="border:1px solid #ccc; padding:6px;">
-                            <t t-esc="linea.color_tela or '-'"/>
+                            <t t-esc="linea.color_tela.name or '-'"/>
                         </td>
                         <td style="border:1px solid #ccc; padding:6px; text-align:center;">
                             <t t-esc="linea.cantidad"/>
