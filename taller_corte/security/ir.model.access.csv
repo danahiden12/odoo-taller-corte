@@ -1,5 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_taller_orden_corte,taller.orden.corte,model_taller_orden_corte,,1,1,1,1
-access_taller_linea_talle,taller.linea.talle,model_taller_linea_talle,,1,1,1,1
-access_taller_linea_tizada,taller.linea.tizada,model_taller_linea_tizada,,1,1,1,1
-access_taller_color_tela,taller.color.tela,model_taller_color_tela,base.group_user,1,1,1,1
+access_taller_orden_corte_user,taller.orden.corte user,model_taller_orden_corte,base.group_user,1,1,1,1
+access_taller_linea_talle_user,taller.linea.talle user,model_taller_linea_talle,base.group_user,1,1,1,1
+access_taller_linea_tizada_user,taller.linea.tizada user,model_taller_linea_tizada,base.group_user,1,1,1,1
+access_taller_color_tela_user,taller.color.tela user,model_taller_color_tela,base.group_user,1,1,1,1
+access_taller_linea_curva_tizada_user,taller.linea.curva.tizada user,model_taller_linea_curva_tizada,base.group_user,1,1,1,1
+access_taller_tizada_capa_color_user,taller.tizada.capa.color user,model_taller_tizada_capa_color,base.group_user,1,1,1,1
+access_taller_orden_corte_historial_user,taller.orden.corte.historial user,model_taller_orden_corte_historial,base.group_user,1,1,1,0
+access_taller_orden_curva_pedido_user,taller.orden.curva.pedido user,model_taller_orden_curva_pedido,base.group_user,1,1,1,1
+access_taller_orden_color_pedido_user,taller.orden.color.pedido user,model_taller_orden_color_pedido,base.group_user,1,1,1,1

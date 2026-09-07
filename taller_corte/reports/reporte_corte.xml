@@ -1,221 +1,1009 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<!-- Formato de página personalizado -->
-<record id="paperformat_taller_corte" model="report.paperformat">
-    <field name="name">Taller de Corte A4</field>
-    <field name="default" eval="False"/>
-    <field name="format">A4</field>
-    <field name="orientation">Portrait</field>
-    <field name="margin_top">5</field>
-    <field name="margin_bottom">5</field>
-    <field name="margin_left">5</field>
-    <field name="margin_right">5</field>
-    <field name="header_line" eval="False"/>
-    <field name="header_spacing">0</field>
-    <field name="dpi">90</field>
-</record>
+    <!-- =====================================================
+         FORMATO DE PAGINA
+         ===================================================== -->
 
-<record id="action_reporte_orden_corte" model="ir.actions.report">
-    <field name="name">Hoja de Corte</field>
-    <field name="model">taller.orden.corte</field>
-    <field name="report_type">qweb-pdf</field>
-    <field name="report_name">taller_corte.reporte_orden_corte</field>
-    <field name="report_file">taller_corte.reporte_orden_corte</field>
-    <field name="binding_model_id" ref="model_taller_orden_corte"/>
-    <field name="binding_type">report</field>
-    <field name="paperformat_id" ref="taller_corte.paperformat_taller_corte"/>
-</record>
+    <record id="paperformat_taller_corte" model="report.paperformat">
+        <field name="name">Taller de Corte A4</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
 
-<template id="reporte_orden_corte">
-<t t-call="web.html_container">
-<t t-foreach="docs" t-as="doc">
 
-<!-- Sin external_layout para evitar header/footer duplicado -->
-<div class="page" style="font-family: Arial, sans-serif; padding: 10px; font-size: 11px;">
+    <!-- =====================================================
+         ACCION DEL REPORTE
+         ===================================================== -->
 
-    <!-- ── ENCABEZADO ── -->
-    <div style="border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom:10px;">
-        <table width="100%">
-            <tr>
-                <!-- Lado izquierdo: N° orden y estado -->
-                <td width="50%">
-                    <h2 style="margin:0; font-size:20px; color:#333;">
-                        <t t-esc="doc.name"/>
-                    </h2>
-                    <p style="margin:4px 0 0 0; color:#666; font-size:12px;">
-                        Estado: <t t-esc="dict(doc._fields['estado'].selection).get(doc.estado, doc.estado)"/>
-                    </p>
-                </td>
-                <!-- Lado derecho: nombre del taller -->
-                <td width="50%" style="text-align:right;">
-                    <h1 style="margin:0; font-size:18px; color:#333;">
-                        WR - Taller de Corte
-                    </h1>
-                    <p style="margin:4px 0 0 0; color:#666; font-size:11px;">
-                        Hoja de Orden de Corte
-                    </p>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <record id="action_reporte_orden_corte" model="ir.actions.report">
+        <field name="name">Hoja de Corte</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">taller_corte.reporte_orden_corte</field>
+        <field name="report_file">taller_corte.reporte_orden_corte</field>
+        <field name="binding_model_id" ref="model_taller_orden_corte"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="taller_corte.paperformat_taller_corte"/>
+        <field name="print_report_name">'Hoja de Corte - %s' % object.name</field>
+    </record>
 
-    <!-- ── DATOS PRINCIPALES ── -->
-    <table width="100%" style="margin-bottom:10px;">
-        <tr>
-            <td width="50%" style="vertical-align:top;">
-                <table style="width:100%; font-size:12px;">
-                    <tr>
-                        <td style="color:#666; width:40%; padding:4px 0;">Molderia:</td>
-                        <td style="font-weight:bold; padding:4px 0;">
-                            <t t-esc="doc.molderia or '-'"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:#666; padding:4px 0;">Tela / Material:</td>
-                        <td style="font-weight:bold; padding:4px 0;">
-                            <t t-esc="doc.tela or '-'"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:#666; padding:4px 0;">Cliente:</td>
-                        <td style="font-weight:bold; padding:4px 0;">
-                            <t t-esc="doc.cliente_id.name or '-'"/>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td width="50%" style="vertical-align:top;">
-                <table style="width:100%; font-size:12px;">
-                    <tr>
-                        <td style="color:#666; width:40%; padding:4px 0;">Fecha Ingreso:</td>
-                        <td style="font-weight:bold; padding:4px 0;">
-                            <t t-esc="doc.fecha_ingreso or '-'"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:#666; padding:4px 0;">Fecha Entrega:</td>
-                        <td style="font-weight:bold; padding:4px 0;">
-                            <t t-esc="doc.fecha_entrega or '-'"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:#666; padding:4px 0;">Total Piezas:</td>
-                        <td style="font-weight:bold; font-size:14px; padding:4px 0;">
-                            <t t-esc="doc.cantidad_total"/>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
 
-    <!-- ── TABLA DE TALLES ── -->
-    <div style="margin-bottom:10px;">
-        <h3 style="font-size:13px; border-bottom:1px solid #ccc; padding-bottom:4px; margin-bottom:8px;">
-            TALLES Y CANTIDADES
-        </h3>
-        <table width="100%" style="border-collapse:collapse; font-size:12px;">
-            <thead>
-                <tr style="background:#f0f0f0;">
-                    <th style="border:1px solid #ccc; padding:6px; text-align:left;">Talle</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:left;">Color</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:center;">Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                <t t-foreach="doc.lineas_talle_ids" t-as="linea">
-                    <tr>
-                        <td style="border:1px solid #ccc; padding:6px;">
-                            <t t-esc="dict(linea._fields['talle'].selection).get(linea.talle, linea.talle)"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px;">
-                            <t t-esc="linea.color_tela.name or '-'"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <t t-esc="linea.cantidad"/>
-                        </td>
-                    </tr>
-                </t>
-            </tbody>
-            <tfoot>
-                <tr style="background:#f0f0f0; font-weight:bold;">
-                    <td colspan="2" style="border:1px solid #ccc; padding:6px; text-align:right;">TOTAL:</td>
-                    <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                        <t t-esc="doc.cantidad_total"/>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+    <!-- =====================================================
+         PLANTILLA
+         ===================================================== -->
 
-    <!-- ── TABLA DE TIZADAS ── -->
-    <div t-if="doc.lineas_tizada_ids" style="margin-bottom:10px;">
-        <h3 style="font-size:13px; border-bottom:1px solid #ccc; padding-bottom:4px; margin-bottom:8px;">
-            TIZADAS
-        </h3>
-        <table width="100%" style="border-collapse:collapse; font-size:12px;">
-            <thead>
-                <tr style="background:#f0f0f0;">
-                    <th style="border:1px solid #ccc; padding:6px; text-align:left;">Tipo de Tela</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:left;">Descripcion</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:center;">Ancho (mts)</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:center;">Largo (mts)</th>
-                    <th style="border:1px solid #ccc; padding:6px; text-align:center;">Consumo (mts)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <t t-foreach="doc.lineas_tizada_ids" t-as="linea">
-                    <tr>
-                        <td style="border:1px solid #ccc; padding:6px;">
-                            <t t-esc="dict(linea._fields['tipo_tela'].selection).get(linea.tipo_tela, linea.tipo_tela)"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px;">
-                            <t t-esc="linea.descripcion or '-'"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <t t-esc="linea.ancho_tizada"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <t t-esc="linea.largo_tizada"/>
-                        </td>
-                        <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <t t-esc="linea.consumo"/>
-                        </td>
-                    </tr>
-                </t>
-            </tbody>
-        </table>
-    </div>
+    <template id="reporte_orden_corte">
 
-    <!-- ── FOTO DE REFERENCIA ── -->
-    <div t-if="doc.foto_referencia" style="margin-bottom:10px;">
-        <h3 style="font-size:13px; border-bottom:1px solid #ccc; padding-bottom:4px; margin-bottom:8px;">
-            FOTO DE REFERENCIA DEL CLIENTE
-        </h3>
-        <img t-att-src="image_data_uri(doc.foto_referencia)"
-            style="max-width:500px; max-height:400px;"/>
-    </div>
+        <t t-call="web.html_container">
 
-    <!-- ── NOTAS ── -->
-    <div t-if="doc.notas" style="margin-bottom:10px;">
-        <h3 style="font-size:13px; border-bottom:1px solid #ccc; padding-bottom:4px; margin-bottom:8px;">
-            NOTAS / INSTRUCCIONES ESPECIALES
-        </h3>
-        <p style="font-size:12px; border:1px solid #ccc; padding:10px; border-radius:4px;">
-            <t t-esc="doc.notas"/>
-        </p>
-    </div>
+            <t t-foreach="docs" t-as="doc">
 
-    <!-- ── PIE ── -->
-    <div style="border-top:1px solid #ccc; padding-top:8px; margin-top:20px; font-size:10px; color:#999; text-align:center;">
-        Documento generado por el sistema de gestion del Taller de Corte
-    </div>
+                <!-- =================================================
+                     PAGINA 1 - ORDEN DE CORTE
+                     ================================================= -->
 
-</div>
+                <div
+                    class="page"
+                    style="
+                        font-family: Arial, sans-serif;
+                        padding: 8px;
+                        font-size: 10.5px;
+                        color: #222222;
+                    ">
 
-</t>
-</t>
-</template>
+                    <style>
+
+                        table {
+                            border-collapse: collapse;
+                        }
+
+                        thead {
+                            display: table-header-group;
+                        }
+
+                        tr {
+                            page-break-inside: avoid;
+                        }
+
+                        .seccion {
+                            margin-bottom: 10px;
+                        }
+
+                        .titulo-seccion {
+                            font-size: 12px;
+                            font-weight: bold;
+                            border-bottom: 1px solid #999999;
+                            padding-bottom: 3px;
+                            margin: 0 0 6px 0;
+                        }
+
+                        .tabla {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        .tabla th,
+                        .tabla td {
+                            border: 1px solid #cccccc;
+                            padding: 4px;
+                        }
+
+                        .tabla th {
+                            background: #eeeeee;
+                            font-weight: bold;
+                        }
+
+                        .muted {
+                            color: #666666;
+                        }
+
+                        .resultado {
+                            background: #f5f5f5;
+                            font-weight: bold;
+                        }
+
+                        .positivo {
+                            color: #a35b00;
+                            font-weight: bold;
+                        }
+
+                        .negativo {
+                            color: #a00000;
+                            font-weight: bold;
+                        }
+
+                    </style>
+
+
+                    <!-- ENCABEZADO -->
+
+                    <div
+                        style="
+                            border-bottom: 2px solid #333333;
+                            padding-bottom: 7px;
+                            margin-bottom: 8px;
+                        ">
+
+                        <table width="100%">
+
+                            <tr>
+
+                                <td
+                                    width="55%"
+                                    style="vertical-align: middle;">
+
+                                    <div
+                                        style="
+                                            font-size: 19px;
+                                            font-weight: bold;
+                                            margin-bottom: 2px;
+                                        ">
+
+                                        <span t-field="doc.name"/>
+
+                                    </div>
+
+                                    <div
+                                        style="
+                                            font-size: 11px;
+                                            color: #666666;
+                                        ">
+
+                                        Hoja de Corte
+
+                                    </div>
+
+                                </td>
+
+
+                                <td
+                                    width="45%"
+                                    style="
+                                        text-align: right;
+                                        vertical-align: middle;
+                                    ">
+
+                                    <table
+                                        style="
+                                            margin-left: auto;
+                                            border-collapse: collapse;
+                                        ">
+
+                                        <tr>
+
+                                            <td
+                                                style="
+                                                    vertical-align: middle;
+                                                    padding-right: 7px;
+                                                ">
+
+                                                <img
+                                                    src="/taller_corte/static/description/icon.png"
+                                                    style="
+                                                        max-width: 42px;
+                                                        max-height: 42px;
+                                                        width: auto;
+                                                        height: auto;
+                                                    "/>
+
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    vertical-align: middle;
+                                                    text-align: left;
+                                                ">
+
+                                                <div
+                                                    style="
+                                                        font-size: 17px;
+                                                        font-weight: bold;
+                                                    ">
+
+                                                    Taller de Corte
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- DATOS PRINCIPALES -->
+
+                    <div class="seccion">
+
+                        <table
+                            width="100%"
+                            style="font-size: 11px;">
+
+                            <tr>
+
+                                <td
+                                    width="50%"
+                                    style="vertical-align: top;">
+
+                                    <table width="100%">
+
+                                        <tr>
+
+                                            <td
+                                                class="muted"
+                                                style="
+                                                    width: 35%;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                Cliente:
+
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    font-weight: bold;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                <t t-if="doc.cliente_id">
+                                                    <span t-field="doc.cliente_id"/>
+                                                </t>
+
+                                                <t t-else="">
+                                                    -
+                                                </t>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td
+                                                class="muted"
+                                                style="padding: 3px 0;">
+
+                                                Molderia:
+
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    font-weight: bold;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                <t t-if="doc.molderia">
+                                                    <span t-field="doc.molderia"/>
+                                                </t>
+
+                                                <t t-else="">
+                                                    -
+                                                </t>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+
+
+                                <td
+                                    width="50%"
+                                    style="vertical-align: top;">
+
+                                    <table width="100%">
+
+                                        <tr>
+
+                                            <td
+                                                class="muted"
+                                                style="
+                                                    width: 45%;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                Fecha de ingreso:
+
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    font-weight: bold;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                <span t-field="doc.fecha_ingreso"/>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td
+                                                class="muted"
+                                                style="padding: 3px 0;">
+
+                                                Fecha del documento:
+
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    font-weight: bold;
+                                                    padding: 3px 0;
+                                                ">
+
+                                                <span t-field="doc.fecha_documento"/>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- CURVA -->
+
+                    <div
+                        class="seccion"
+                        t-if="doc.curva_pedido_ids">
+
+                        <h3 class="titulo-seccion">
+                            CURVA DEL PEDIDO
+                        </h3>
+
+
+                        <table
+                            class="tabla"
+                            style="
+                                width: auto;
+                                min-width: 55%;
+                                font-size: 11px;
+                            ">
+
+                            <tr>
+
+                                <th style="text-align: left;">
+                                    Talle
+                                </th>
+
+                                <t
+                                    t-foreach="doc.curva_pedido_ids"
+                                    t-as="curva">
+
+                                    <th style="text-align: center;">
+                                        <span t-field="curva.talle"/>
+                                    </th>
+
+                                </t>
+
+                                <th style="text-align: center;">
+                                    Total teorico
+                                </th>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td style="font-weight: bold;">
+                                    Prendas / capa
+                                </td>
+
+                                <t
+                                    t-foreach="doc.curva_pedido_ids"
+                                    t-as="curva">
+
+                                    <td style="text-align: center;">
+
+                                        <span
+                                            t-field="curva.cantidad_base"
+                                            t-options='{"widget": "float", "precision": 2}'/>
+
+                                    </td>
+
+                                </t>
+
+                                <td
+                                    class="resultado"
+                                    style="text-align: center;">
+
+                                    <span
+                                        t-field="doc.prendas_por_capa_plan"
+                                        t-options='{"widget": "float", "precision": 2}'/>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- MATRIZ -->
+
+                    <div
+                        class="seccion"
+                        t-if="doc.colores_pedido_ids">
+
+                        <h3 class="titulo-seccion">
+                            CANTIDADES POR COLOR Y TALLE
+                        </h3>
+
+
+                        <table
+                            class="tabla"
+                            style="font-size: 10.5px;">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th style="text-align: left;">
+                                        Color
+                                    </th>
+
+                                    <t
+                                        t-foreach="doc.curva_pedido_ids"
+                                        t-as="curva">
+
+                                        <th style="text-align: center;">
+                                            <span t-field="curva.talle"/>
+                                        </th>
+
+                                    </t>
+
+                                    <th style="text-align: center;">
+                                        Pedido
+                                    </th>
+
+                                    <th style="text-align: center;">
+                                        Base
+                                    </th>
+
+                                    <th style="text-align: center;">
+                                        Dif.
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <t
+                                    t-foreach="doc.colores_pedido_ids"
+                                    t-as="color">
+
+                                    <tr>
+
+                                        <td style="font-weight: bold;">
+                                            <span t-field="color.color_tela_id"/>
+                                        </td>
+
+
+                                        <t
+                                            t-foreach="doc.curva_pedido_ids"
+                                            t-as="curva">
+
+                                            <td style="text-align: center;">
+
+                                                <t t-esc="doc.cantidad_planificada_talle_color(color.color_tela_id.id, curva.talle)"/>
+
+                                            </td>
+
+                                        </t>
+
+
+                                        <td style="text-align: center;">
+                                            <span t-field="color.cantidad_prendas"/>
+                                        </td>
+
+
+                                        <td style="text-align: center;">
+
+                                            <t
+                                                t-set="total_base_color"
+                                                t-value="sum(doc.lineas_talle_ids.filtered(lambda l: l.color_tela_id.id == color.color_tela_id.id).mapped('cantidad'))"/>
+
+                                            <t t-esc="total_base_color"/>
+
+                                        </td>
+
+
+                                        <td style="text-align: center;">
+
+                                            <t
+                                                t-set="diferencia_base"
+                                                t-value="total_base_color - color.cantidad_prendas"/>
+
+                                            <t t-if="diferencia_base &gt; 0">
+
+                                                <span class="positivo">
+                                                    +<t t-esc="diferencia_base"/>
+                                                </span>
+
+                                            </t>
+
+                                            <t t-elif="diferencia_base &lt; 0">
+
+                                                <span class="negativo">
+                                                    <t t-esc="diferencia_base"/>
+                                                </span>
+
+                                            </t>
+
+                                            <t t-else="">
+                                                0
+                                            </t>
+
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- TIZADAS -->
+
+                    <div
+                        class="seccion"
+                        t-if="doc.lineas_tizada_ids">
+
+                        <h3 class="titulo-seccion">
+                            TIZADAS
+                        </h3>
+
+
+                        <t
+                            t-foreach="doc.lineas_tizada_ids"
+                            t-as="tizada">
+
+                            <div
+                                style="
+                                    border: 1px solid #bbbbbb;
+                                    padding: 6px;
+                                    margin-bottom: 8px;
+                                    page-break-inside: avoid;
+                                ">
+
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: bold;
+                                        margin-bottom: 5px;
+                                    ">
+
+                                    <span t-field="tizada.tipo_tela"/>
+
+                                </div>
+
+
+                                <table
+                                    class="tabla"
+                                    style="
+                                        font-size: 9.5px;
+                                        margin-bottom: 6px;
+                                    ">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Ancho</th>
+                                            <th>Largo</th>
+                                            <th>Capas</th>
+                                            <th>Planificado</th>
+                                            <th>Tela total</th>
+                                            <th>Consumo / prenda</th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td style="text-align: center;">
+
+                                                <span
+                                                    t-field="tizada.ancho_tizada"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+
+                                                m
+
+                                            </td>
+
+
+                                            <td style="text-align: center;">
+
+                                                <span
+                                                    t-field="tizada.largo_tizada"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+
+                                                m
+
+                                            </td>
+
+
+                                            <td style="text-align: center;">
+                                                <span t-field="tizada.cantidad_capas"/>
+                                            </td>
+
+
+                                            <td
+                                                style="
+                                                    text-align: center;
+                                                    font-weight: bold;
+                                                ">
+
+                                                <span t-field="tizada.cantidad_producida"/>
+
+                                            </td>
+
+
+                                            <td style="text-align: center;">
+
+                                                <span
+                                                    t-field="tizada.tela_total"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+
+                                                m
+
+                                            </td>
+
+
+                                            <td style="text-align: center;">
+
+                                                <span
+                                                    t-field="tizada.consumo"
+                                                    t-options='{"widget": "float", "precision": 3}'/>
+
+                                                m
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+
+                                <table
+                                    class="tabla"
+                                    style="font-size: 9.5px;">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Color base</th>
+                                            <th>Color de combinacion</th>
+                                            <th>Pedido</th>
+                                            <th>Capas</th>
+                                            <th>Planificado</th>
+                                            <th>Diferencia</th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <t
+                                            t-foreach="tizada.capas_color_ids"
+                                            t-as="capa">
+
+                                            <tr>
+
+                                                <td>
+
+                                                    <t t-if="capa.pedido_color_id">
+                                                        <span t-field="capa.pedido_color_id.color_tela_id"/>
+                                                    </t>
+
+                                                    <t t-else="">
+                                                        -
+                                                    </t>
+
+                                                </td>
+
+
+                                                <td>
+                                                    <span t-field="capa.color_tela_id"/>
+                                                </td>
+
+
+                                                <td style="text-align: center;">
+
+                                                    <t t-if="capa.pedido_color_id">
+                                                        <span t-field="capa.pedido_color_id.cantidad_prendas"/>
+                                                    </t>
+
+                                                    <t t-else="">
+                                                        -
+                                                    </t>
+
+                                                </td>
+
+
+                                                <td style="text-align: center;">
+                                                    <span t-field="capa.cantidad_capas"/>
+                                                </td>
+
+
+                                                <td
+                                                    style="
+                                                        text-align: center;
+                                                        font-weight: bold;
+                                                    ">
+
+                                                    <span t-field="capa.cantidad_producida"/>
+
+                                                </td>
+
+
+                                                <td style="text-align: center;">
+
+                                                    <t t-if="capa.diferencia &gt; 0">
+
+                                                        <span class="positivo">
+                                                            Sobran
+                                                            <t t-esc="capa.diferencia"/>
+                                                        </span>
+
+                                                    </t>
+
+                                                    <t t-elif="capa.diferencia &lt; 0">
+
+                                                        <span class="negativo">
+                                                            Faltan
+                                                            <t t-esc="-capa.diferencia"/>
+                                                        </span>
+
+                                                    </t>
+
+                                                    <t t-else="">
+                                                        0
+                                                    </t>
+
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </t>
+
+                    </div>
+
+
+                    <!-- NOTAS -->
+
+                    <div
+                        class="seccion"
+                        t-if="doc.notas">
+
+                        <h3 class="titulo-seccion">
+                            NOTAS
+                        </h3>
+
+                        <div
+                            style="
+                                border: 1px solid #cccccc;
+                                padding: 7px;
+                                white-space: pre-wrap;
+                                font-size: 10.5px;
+                            ">
+
+                            <span t-field="doc.notas"/>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PIE -->
+
+                    <div
+                        style="
+                            border-top: 1px solid #cccccc;
+                            padding-top: 5px;
+                            margin-top: 10px;
+                            font-size: 8.5px;
+                            color: #999999;
+                            text-align: center;
+                        ">
+
+                        Documento generado por Taller de Corte
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     FICHA TECNICA - PAGINA 1
+                     ================================================= -->
+
+                <div
+                    class="page"
+                    t-if="doc.foto_referencia"
+                    style="
+                        page-break-before: always;
+                        font-family: Arial, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    ">
+
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: bold;
+                            text-align: left;
+                            border-bottom: 1px solid #999999;
+                            padding-bottom: 4px;
+                            margin-bottom: 4mm;
+                        ">
+
+                        FICHA TECNICA - PAGINA 1
+
+                    </div>
+
+
+                    <table
+                        style="
+                            width: 100%;
+                            height: 265mm;
+                            border-collapse: collapse;
+                        ">
+
+                        <tr>
+
+                            <td
+                                style="
+                                    width: 100%;
+                                    height: 265mm;
+                                    text-align: center;
+                                    vertical-align: top;
+                                    padding: 0;
+                                ">
+
+                                <img
+                                    t-att-src="image_data_uri(doc.foto_referencia)"
+                                    style="
+                                        width: 190mm;
+                                        height: auto;
+                                        max-height: 265mm;
+                                    "/>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================================
+                     FICHA TECNICA - PAGINA 2
+                     ================================================= -->
+
+                <div
+                    class="page"
+                    t-if="doc.ficha_tecnica_pagina_2"
+                    style="
+                        page-break-before: always;
+                        font-family: Arial, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    ">
+
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: bold;
+                            text-align: left;
+                            border-bottom: 1px solid #999999;
+                            padding-bottom: 4px;
+                            margin-bottom: 4mm;
+                        ">
+
+                        FICHA TECNICA - PAGINA 2
+
+                    </div>
+
+
+                    <table
+                        style="
+                            width: 100%;
+                            height: 265mm;
+                            border-collapse: collapse;
+                        ">
+
+                        <tr>
+
+                            <td
+                                style="
+                                    width: 100%;
+                                    height: 265mm;
+                                    text-align: center;
+                                    vertical-align: top;
+                                    padding: 0;
+                                ">
+
+                                <img
+                                    t-att-src="image_data_uri(doc.ficha_tecnica_pagina_2)"
+                                    style="
+                                        width: 190mm;
+                                        height: auto;
+                                        max-height: 265mm;
+                                    "/>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+
+            </t>
+
+        </t>
+
+    </template>
 
 </odoo>

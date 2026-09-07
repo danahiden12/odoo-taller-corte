@@ -1,248 +1,1022 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<!-- ══════════════════════════════════════════════════
-     VISTA KANBAN
-     ══════════════════════════════════════════════════ -->
-<record id="view_orden_corte_kanban" model="ir.ui.view">
-    <field name="name">taller.orden.corte.kanban</field>
-    <field name="model">taller.orden.corte</field>
-    <field name="arch" type="xml">
-        <kanban default_group_by="estado"
+    <!-- =====================================================
+         VISTA KANBAN
+         ===================================================== -->
+
+    <record id="view_orden_corte_kanban" model="ir.ui.view">
+        <field name="name">taller.orden.corte.kanban</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <kanban
+                default_group_by="estado"
                 quick_create="false"
                 group_create="false"
                 group_delete="false">
 
-           <progressbar field="estado"
-             colors='{
-                 "ingreso": "200",
-                 "molderia": "200",
-                 "tizada": "200",
-                 "en_corte": "200",
-                 "control": "200",
-                 "entregado": "200"
-             }'/>
+                <progressbar
+                    field="estado"
+                    colors='{
+                        "ingreso": "muted",
+                        "molderia": "muted",
+                        "tizada": "muted",
+                        "en_corte": "muted",
+                        "control": "muted",
+                        "entregado": "muted"
+                    }'/>
 
-            <field name="name"/>
-            <field name="molderia"/>
-            <field name="tela"/>
-            <field name="cantidad_total"/>
-            <field name="fecha_entrega"/>
-            <field name="cliente_id"/>
-            <field name="estado"/>
-            <field name="foto_referencia"/>
-            <field name="color"/>
+                <field name="name"/>
+                <field name="molderia"/>
+                <field name="cantidad_total_plan"/>
+                <field name="fecha_entrega_prevista"/>
+                <field name="fecha_entrega_real"/>
+                <field name="cliente_id"/>
+                <field name="estado"/>
+                <field name="foto_referencia"/>
+                <field name="advertencia_produccion"/>
 
-            <templates>
-                <t t-name="kanban-box">
-                    <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                <templates>
 
-                        <!-- Menú tres puntitos -->
-                        <div class="o_dropdown_kanban dropdown">
-                            <a class="dropdown-toggle o-no-caret btn"
-                               data-bs-toggle="dropdown"
-                               aria-expanded="false"
-                               role="button">
-                                <span class="fa fa-ellipsis-v"/>
-                            </a>
-                            <div class="dropdown-menu" role="menu">
-                                <a role="menuitem"
-                                   type="delete"
-                                   class="dropdown-item">
-                                    Eliminar
+                    <t t-name="kanban-box">
+
+                        <div class="oe_kanban_card oe_kanban_global_click">
+
+                            <div class="o_dropdown_kanban dropdown">
+
+                                <a
+                                    class="dropdown-toggle o-no-caret btn"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    role="button"
+                                    title="Acciones">
+
+                                    <span
+                                        class="fa fa-ellipsis-v"
+                                        title="Acciones"/>
+
                                 </a>
-                            </div>
-                        </div>
 
-                        <!-- Cabecera: nombre + foto miniatura -->
-                        <div class="d-flex justify-content-between align-items-start">
+                                <div class="dropdown-menu" role="menu">
+
+                                    <a
+                                        role="menuitem"
+                                        type="delete"
+                                        class="dropdown-item">
+                                        Eliminar
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div>
+
+                                    <div class="o_kanban_record_title">
+                                        <strong>
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+
+                                    <div class="o_kanban_record_subtitle text-muted">
+                                        <field name="molderia"/>
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    t-if="record.foto_referencia.raw_value"
+                                    style="
+                                        width: 60px;
+                                        height: 60px;
+                                        overflow: hidden;
+                                        border-radius: 4px;
+                                        flex-shrink: 0;
+                                        margin-left: 8px;
+                                    ">
+
+                                    <field
+                                        name="foto_referencia"
+                                        widget="image"
+                                        options="{'size': [60, 60]}"
+                                        style="
+                                            width: 60px;
+                                            height: 60px;
+                                            object-fit: cover;
+                                        "/>
+
+                                </div>
+
+                            </div>
+
+
+                            <hr style="margin: 6px 0;"/>
+
+
                             <div>
-                                <div class="o_kanban_record_title">
-                                    <strong><field name="name"/></strong>
-                                </div>
-                                <div class="o_kanban_record_subtitle text-muted">
-                                    <field name="molderia"/>
-                                </div>
+                                <span class="text-muted">Pedido: </span>
+
+                                <strong>
+                                    <field name="cantidad_total_plan"/>
+                                </strong>
                             </div>
-                            <!-- Foto miniatura si existe -->
-                            <div t-if="record.foto_referencia.raw_value"
-                                 style="width:60px; height:60px; overflow:hidden; border-radius:4px; flex-shrink:0; margin-left:8px;">
-                                <field name="foto_referencia"
-                                       widget="image"
-                                       options="{'size': [60, 60]}"
-                                       style="width:60px; height:60px; object-fit:cover;"/>
+
+
+                            <div>
+                                <span class="text-muted">Cliente: </span>
+                                <field name="cliente_id"/>
                             </div>
+
+
+                            <div t-if="record.fecha_entrega_prevista.raw_value">
+                                <span class="text-muted">Entrega prevista: </span>
+                                <field name="fecha_entrega_prevista"/>
+                            </div>
+
+
+                            <div t-if="record.fecha_entrega_real.raw_value">
+                                <span class="text-muted">Entrega real: </span>
+                                <field name="fecha_entrega_real"/>
+                            </div>
+
+
+                            <div
+                                class="mt-2"
+                                t-if="record.advertencia_produccion.raw_value">
+
+                                <span class="badge rounded-pill text-bg-warning">
+                                    Revisar produccion
+                                </span>
+
+                            </div>
+
                         </div>
 
-                        <hr style="margin: 4px 0;"/>
+                    </t>
 
-                        <div>
-                            <span class="text-muted">Tela: </span>
-                            <field name="tela"/>
-                        </div>
-                        <div>
-                            <span class="text-muted">Total: </span>
-                            <strong><field name="cantidad_total"/></strong>
-                        </div>
-                        <div>
-                            <span class="text-muted">Entrega: </span>
-                            <field name="fecha_entrega"/>
-                        </div>
+                </templates>
 
-                        <div class="oe_kanban_bottom_right mt-2">
-                            <field name="cliente_id"
-                                   widget="many2one_avatar"/>
+            </kanban>
+
+        </field>
+    </record>
+
+
+    <!-- =====================================================
+         VISTA FORMULARIO
+         ===================================================== -->
+
+    <record id="view_orden_corte_form" model="ir.ui.view">
+        <field name="name">taller.orden.corte.form</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <form string="Orden de Corte">
+
+                <!-- =================================================
+                     CABECERA
+                     ================================================= -->
+
+                <header>
+
+                    <button
+                        name="action_molderia"
+                        string="→ Molderia"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="estado != 'ingreso'"/>
+
+                    <button
+                        name="action_tizada"
+                        string="→ Tizada"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="estado != 'molderia'"/>
+
+                    <button
+                        name="action_en_corte"
+                        string="→ En Corte"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="estado != 'tizada'"/>
+
+                    <button
+                        name="action_control"
+                        string="→ Control"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="estado != 'en_corte'"/>
+
+                    <button
+                        name="action_entregado"
+                        string="Entregar"
+                        type="object"
+                        class="btn-primary"
+                        invisible="estado != 'control'"/>
+
+                    <field
+                        name="estado"
+                        widget="statusbar"
+                        statusbar_visible="ingreso,molderia,tizada,en_corte,control,entregado"
+                        options="{'clickable': 1}"/>
+
+                </header>
+
+
+                <sheet>
+
+                    <!-- =================================================
+                         ADVERTENCIA GENERAL
+                         ================================================= -->
+
+                    <div
+                        class="alert alert-warning"
+                        role="alert"
+                        invisible="not advertencia_produccion">
+
+                        <strong>
+                            Revisar diferencias entre pedido y corte
+                        </strong>
+
+                        <br/>
+
+                        <field
+                            name="advertencia_produccion"
+                            readonly="1"
+                            nolabel="1"/>
+
+                        <div class="mt-2">
+                            La diferencia es informativa.
+                            El operario puede modificar las capas
+                            de cada tizada segun lo acordado con el cliente.
                         </div>
 
                     </div>
-                </t>
-            </templates>
-        </kanban>
-    </field>
-</record>
 
 
-<!-- ══════════════════════════════════════════════════
-     VISTA FORMULARIO
-     ══════════════════════════════════════════════════ -->
-<record id="view_orden_corte_form" model="ir.ui.view">
-    <field name="name">taller.orden.corte.form</field>
-    <field name="model">taller.orden.corte</field>
-    <field name="arch" type="xml">
-        <form>
-           <header>
-                    <button name="action_molderia"  string="→ Moldería"  type="object" class="btn-secondary"
-                        invisible="estado != 'ingreso'"/>
-                    <button name="action_tizada"    string="→ Tizada"    type="object" class="btn-secondary"
-                        invisible="estado != 'molderia'"/>
-                    <button name="action_en_corte"  string="→ En Corte"  type="object" class="btn-secondary"
-                        invisible="estado != 'tizada'"/>
-                    <button name="action_control"   string="→ Control"   type="object" class="btn-secondary"
-                        invisible="estado != 'en_corte'"/>
-                    <button name="action_entregado" string="Entregar"    type="object" class="btn-primary"
-                        invisible="estado != 'control'"/>
-                    <field name="estado" widget="statusbar"
-                        statusbar_visible="ingreso,molderia,tizada,en_corte,control,entregado"
-                        options="{'clickable': 1}"/>
-</header>
-            <sheet>
-                <group>
-                    <group string="Datos de la Orden">
-                        <field name="name" placeholder="Ej: OC-2045"/>
-                        <field name="molderia"/>
-                        <field name="tela"/>
-                        <field name="cliente_id"/>
-                        <field name="fecha_ingreso"/>
-                        <field name="fecha_entrega"/>
+                    <!-- =================================================
+                         DATOS GENERALES
+                         ================================================= -->
+
+                    <group>
+
+                        <group string="Datos de la orden">
+
+                            <field name="name"/>
+
+                            <field name="molderia"/>
+
+                            <field name="cliente_id"/>
+
+                            <field name="fecha_ingreso"/>
+
+                            <field name="fecha_entrega_prevista"/>
+
+                            <field
+                                name="fecha_entrega_real"
+                                readonly="1"/>
+
+                        </group>
+
+
+                        <!-- =================================================
+                             FICHA TECNICA
+                             ================================================= -->
+
+                        <group string="Ficha tecnica" col="2">
+
+                            <group string="Pagina 1">
+
+                                <field
+                                    name="foto_referencia"
+                                    widget="image"
+                                    nolabel="1"
+                                    options="{'size': [250, 220]}"/>
+
+                            </group>
+
+
+                            <group string="Pagina 2">
+
+                                <field
+                                    name="ficha_tecnica_pagina_2"
+                                    widget="image"
+                                    nolabel="1"
+                                    options="{'size': [250, 220]}"/>
+
+                            </group>
+
+                        </group>
+
                     </group>
-                    <group string="Foto de Referencia del Cliente">
-                        <field name="foto_referencia"
-                               widget="image"
-                               options="{'size': [400, 400]}"
-                               nolabel="1"/>
-                    </group>
+
+
+                    <!-- =================================================
+                         PESTAÑAS
+                         ================================================= -->
+
+                    <notebook>
+
+
+                        <!-- =============================================
+                             PLAN DEL PEDIDO
+                             ============================================= -->
+
+                        <page string="Plan del pedido">
+
+                            <div class="alert alert-info" role="alert">
+
+                                Cargue una sola vez la curva del pedido
+                                y la cantidad solicitada por color.
+
+                                Odoo calcula automaticamente una distribucion
+                                base por talle y utiliza estos datos para
+                                proponer las capas de las tizadas.
+
+                            </div>
+
+
+                            <group>
+
+                                <group string="1. Curva por capa">
+
+                                    <div class="text-muted mb-2">
+
+                                        Indique cuantas prendas de cada talle
+                                        salen por capa.
+
+                                        Se permiten valores fraccionarios.
+
+                                        Ejemplo:
+                                        S = 2,
+                                        M = 2,
+                                        L = 1,
+                                        XL = 0,5.
+
+                                    </div>
+
+
+                                    <field
+                                        name="curva_pedido_ids"
+                                        nolabel="1">
+
+                                        <tree editable="bottom">
+
+                                            <field name="talle"/>
+
+                                            <field
+                                                name="cantidad_base"
+                                                digits="[10,2]"/>
+
+                                        </tree>
+
+                                    </field>
+
+
+                                    <field
+                                        name="prendas_por_capa_plan"
+                                        string="Curva total teorica"
+                                        readonly="1"/>
+
+                                </group>
+
+
+                                <group string="2. Cantidad pedida por color">
+
+                                    <div class="text-muted mb-2">
+
+                                        Indique solamente la cantidad
+                                        solicitada por el cliente para cada color.
+
+                                        Las capas se propondran despues
+                                        automaticamente dentro de cada tizada.
+
+                                    </div>
+
+
+                                    <field
+                                        name="colores_pedido_ids"
+                                        nolabel="1">
+
+                                        <tree editable="bottom">
+
+                                            <field name="color_tela_id"/>
+
+                                            <field name="cantidad_prendas"/>
+
+                                        </tree>
+
+                                    </field>
+
+
+                                    <field
+                                        name="cantidad_total_plan"
+                                        string="TOTAL PEDIDO"
+                                        readonly="1"/>
+
+                                </group>
+
+                            </group>
+
+
+                            <separator string="Distribucion base calculada"/>
+
+
+                            <div class="text-muted mb-2">
+
+                                Esta tabla es calculada por Odoo.
+                                Cuando la curva no permite obtener exactamente
+                                el pedido, se utiliza la produccion base inferior.
+
+                                La decision final se realiza en cada tizada
+                                modificando las capas.
+
+                            </div>
+
+
+                            <field
+                                name="lineas_talle_ids"
+                                nolabel="1"
+                                readonly="1">
+
+                                <tree
+                                    create="false"
+                                    edit="false"
+                                    delete="false">
+
+                                    <field name="color_tela_id"/>
+
+                                    <field name="talle"/>
+
+                                    <field name="cantidad"/>
+
+                                </tree>
+
+                            </field>
+
+
+                            <group>
+
+                                <field
+                                    name="cantidad_total"
+                                    string="TOTAL BASE CALCULADO"
+                                    readonly="1"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- =============================================
+                             TIZADAS
+                             ============================================= -->
+
+                        <page string="Tizadas">
+
+                            <div class="alert alert-info" role="alert">
+
+                                Cree una tizada por material.
+
+                                La curva y las capas se proponen desde el pedido.
+                                Despues puede cambiar colores, capas,
+                                ancho y largo segun lo que ocurra
+                                realmente durante el corte.
+
+                            </div>
+
+
+                            <field
+                                name="lineas_tizada_ids"
+                                nolabel="1"
+                                context="{'default_orden_id': id}">
+
+                                <tree>
+
+                                    <field name="tipo_tela"/>
+
+                                    <field
+                                        name="ancho_tizada"
+                                        string="Ancho (m)"/>
+
+                                    <field
+                                        name="largo_tizada"
+                                        string="Largo (m)"/>
+
+                                    <field
+                                        name="cantidad_capas"
+                                        string="Capas"/>
+
+                                    <field
+                                        name="cantidad_producida"
+                                        string="Planificado"/>
+
+                                    <field
+                                        name="tela_total"
+                                        string="Tela total (m)"/>
+
+                                    <field
+                                        name="consumo"
+                                        string="Consumo/prenda"/>
+
+                                </tree>
+
+
+                                <form string="Detalle de tizada">
+
+                                    <sheet>
+
+                                        <field
+                                            name="orden_id"
+                                            invisible="1"/>
+
+
+                                        <div class="d-flex gap-2 mb-3">
+
+                                            <button
+                                                name="action_proponer_desde_pedido"
+                                                string="Volver a proponer desde pedido"
+                                                type="object"
+                                                class="btn-secondary"
+                                                icon="fa-magic"/>
+
+                                            <button
+                                                name="action_duplicar_tizada"
+                                                string="Duplicar tizada"
+                                                type="object"
+                                                class="btn-secondary"
+                                                icon="fa-copy"/>
+
+                                        </div>
+
+
+                                        <div
+                                            class="alert alert-warning"
+                                            role="alert"
+                                            invisible="not advertencia_produccion">
+
+                                            <strong>
+                                                Diferencia respecto del pedido
+                                            </strong>
+
+                                            <br/>
+
+                                            <field
+                                                name="advertencia_produccion"
+                                                readonly="1"
+                                                nolabel="1"/>
+
+                                        </div>
+
+
+                                        <group>
+
+                                            <group string="Datos de la tizada">
+
+                                                <field name="tipo_tela"/>
+
+                                                <field
+                                                    name="ancho_tizada"
+                                                    placeholder="Ej.: 1,49"/>
+
+                                                <field
+                                                    name="largo_tizada"
+                                                    placeholder="Ej.: 3,33"/>
+
+                                            </group>
+
+
+                                            <group string="Resultados automaticos">
+
+                                                <field
+                                                    name="prendas_por_capa"
+                                                    readonly="1"/>
+
+                                                <field
+                                                    name="cantidad_capas"
+                                                    readonly="1"/>
+
+                                                <field
+                                                    name="cantidad_producida"
+                                                    readonly="1"/>
+
+                                                <field
+                                                    name="tela_total"
+                                                    readonly="1"/>
+
+                                                <field
+                                                    name="consumo"
+                                                    readonly="1"/>
+
+                                            </group>
+
+                                        </group>
+
+
+                                        <notebook>
+
+                                            <page string="Curva">
+
+                                                <div class="alert alert-light" role="alert">
+
+                                                    Esta curva se copia del pedido.
+
+                                                    Modifiquela solamente cuando
+                                                    esta tizada sea una excepcion.
+
+                                                    Las cantidades fraccionarias,
+                                                    como 0,5, se calculan siempre
+                                                    redondeando la produccion
+                                                    hacia abajo.
+
+                                                </div>
+
+
+                                                <field
+                                                    name="curva_ids"
+                                                    nolabel="1">
+
+                                                    <tree editable="bottom">
+
+                                                        <field name="talle"/>
+
+                                                        <field
+                                                            name="cantidad_por_capa"
+                                                            digits="[10,2]"/>
+
+                                                    </tree>
+
+                                                </field>
+
+                                            </page>
+
+
+                                            <page string="Colores y capas">
+
+                                                <div class="alert alert-light" role="alert">
+
+                                                    Odoo propone las capas utilizando
+                                                    las cantidades del pedido.
+
+                                                    "Color base" identifica el color
+                                                    principal solicitado por el cliente.
+
+                                                    "Color de combinacion" indica el color
+                                                    que corresponde a esta tela o material.
+
+                                                    Ejemplo:
+                                                    Negro base → Violeta de forreria.
+
+                                                    Las capas pueden modificarse
+                                                    antes o durante el corte.
+
+                                                </div>
+
+
+                                                <field
+                                                    name="capas_color_ids"
+                                                    nolabel="1">
+
+                                                    <tree editable="bottom">
+
+                                                        <field
+                                                            name="pedido_color_id"
+                                                            string="Color base"
+                                                            domain="[('orden_id', '=', parent.orden_id)]"/>
+
+                                                        <field
+                                                            name="color_tela_id"
+                                                            string="Color de combinacion"/>
+
+                                                        <field
+                                                            name="cantidad_pedida"
+                                                            string="Pedido"
+                                                            readonly="1"/>
+
+                                                        <field
+                                                            name="cantidad_capas"
+                                                            string="Capas"/>
+
+                                                        <field
+                                                            name="cantidad_producida"
+                                                            string="Planificado"
+                                                            readonly="1"/>
+
+                                                        <field
+                                                            name="diferencia"
+                                                            string="Diferencia"
+                                                            readonly="1"
+                                                            decoration-success="diferencia == 0"
+                                                            decoration-warning="diferencia != 0"/>
+
+                                                    </tree>
+
+                                                </field>
+
+                                            </page>
+
+                                        </notebook>
+
+                                    </sheet>
+
+                                </form>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- =============================================
+                             NOTAS
+                             ============================================= -->
+
+                        <page string="Notas">
+
+                            <div class="text-muted mb-2">
+
+                                Use este espacio para instrucciones
+                                especiales del corte.
+
+                                Ejemplo:
+                                Separar 5 metros de cada variante
+                                para collareta.
+
+                            </div>
+
+                            <field
+                                name="notas"
+                                placeholder="Instrucciones especiales, observaciones..."
+                                nolabel="1"/>
+
+                        </page>
+
+
+                        <!-- =============================================
+                             HISTORIAL
+                             ============================================= -->
+
+                        <page string="Historial">
+
+                            <div class="text-muted mb-2">
+
+                                Registro automatico de los cambios
+                                de estado de la orden.
+
+                            </div>
+
+
+                            <field
+                                name="historial_ids"
+                                nolabel="1"
+                                readonly="1">
+
+                                <tree
+                                    create="false"
+                                    edit="false"
+                                    delete="false">
+
+                                    <field name="estado_anterior"/>
+
+                                    <field name="estado"/>
+
+                                    <field name="fecha_inicio"/>
+
+                                    <field name="fecha_fin"/>
+
+                                    <field name="usuario_id"/>
+
+                                </tree>
+
+                            </field>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+
+                <chatter/>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- =====================================================
+         VISTA LISTA
+         ===================================================== -->
+
+    <record id="view_orden_corte_list" model="ir.ui.view">
+        <field name="name">taller.orden.corte.list</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <tree
+                decoration-success="estado == 'entregado'"
+                decoration-warning="estado == 'en_corte'"
+                decoration-info="estado == 'molderia'">
+
+                <field name="name"/>
+                <field name="molderia"/>
+                <field name="cantidad_total_plan"/>
+                <field name="cliente_id"/>
+                <field name="fecha_ingreso"/>
+                <field name="fecha_entrega_prevista"/>
+                <field name="fecha_entrega_real"/>
+                <field name="estado"/>
+
+            </tree>
+
+        </field>
+    </record>
+
+
+    <!-- =====================================================
+         BUSQUEDA
+         ===================================================== -->
+
+    <record id="view_orden_corte_search" model="ir.ui.view">
+        <field name="name">taller.orden.corte.search</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <search string="Buscar ordenes de corte">
+
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="molderia"/>
+                <field name="estado"/>
+
+                <separator/>
+
+                <filter
+                    name="pendientes"
+                    string="Pendientes"
+                    domain="[('estado', '!=', 'entregado')]"/>
+
+                <filter
+                    name="entregadas"
+                    string="Entregadas"
+                    domain="[('estado', '=', 'entregado')]"/>
+
+                <filter
+                    name="sin_fecha_entrega"
+                    string="Sin fecha prevista"
+                    domain="[('fecha_entrega_prevista', '=', False)]"/>
+
+                <filter
+                    name="con_foto"
+                    string="Con ficha tecnica"
+                    domain="[('tiene_foto', '=', True)]"/>
+
+                <filter
+                    name="sin_foto"
+                    string="Sin ficha tecnica"
+                    domain="[('tiene_foto', '=', False)]"/>
+
+                <group expand="0" string="Agrupar por">
+
+                    <filter
+                        name="group_estado"
+                        string="Estado"
+                        context="{'group_by': 'estado'}"/>
+
+                    <filter
+                        name="group_cliente"
+                        string="Cliente"
+                        context="{'group_by': 'cliente_id'}"/>
+
+                    <filter
+                        name="group_fecha_ingreso"
+                        string="Mes de ingreso"
+                        context="{'group_by': 'fecha_ingreso:month'}"/>
+
+                    <filter
+                        name="group_fecha_entrega"
+                        string="Mes de entrega prevista"
+                        context="{'group_by': 'fecha_entrega_prevista:month'}"/>
+
                 </group>
 
-                <notebook>
+            </search>
 
-                    <page string="Talles y Cantidades">
-                        <field name="lineas_talle_ids" nolabel="1">
-                            <tree editable="bottom">
-                                <field name="talle"/>
-                                <field name="color_tela"/>
-                                <field name="cantidad"/>
-                            </tree>
-                        </field>
-                        <group>
-                            <field name="cantidad_total"
-                                   string="TOTAL DE PIEZAS"
-                                   readonly="1"/>
-                        </group>
-                    </page>
-
-                    <page string="Tizadas">
-                        <field name="lineas_tizada_ids">
-                            <tree editable="bottom">
-                                <field name="tipo_tela"/>
-                                <field name="descripcion"/>
-                                <field name="ancho_tizada"/>
-                                <field name="largo_tizada"/>
-                                <field name="consumo" readonly="1"/>
-                            </tree>
-                        </field>
-                    </page>
-
-                    <page string="Notas">
-                        <field name="notas"
-                               placeholder="Instrucciones especiales, observaciones..."
-                               nolabel="1"/>
-                    </page>
-
-                </notebook>
-            </sheet>
-            <chatter/>
-        </form>
-    </field>
-</record>
+        </field>
+    </record>
 
 
-<!-- ══════════════════════════════════════════════════
-     VISTA LISTA
-     ══════════════════════════════════════════════════ -->
-<record id="view_orden_corte_list" model="ir.ui.view">
-    <field name="name">taller.orden.corte.list</field>
-    <field name="model">taller.orden.corte</field>
-    <field name="arch" type="xml">
-        <tree decoration-success="estado == 'entregado'"
-              decoration-warning="estado == 'en_corte'"
-              decoration-info="estado == 'molderia'">
-            <field name="name"/>
-            <field name="molderia"/>
-            <field name="tela"/>
-            <field name="cantidad_total"/>
-            <field name="cliente_id"/>
-            <field name="fecha_ingreso"/>
-            <field name="fecha_entrega"/>
-            <field name="estado"/>
-        </tree>
-    </field>
-</record>
+    <!-- =====================================================
+         CALENDARIO
+         ===================================================== -->
+
+    <record id="view_orden_corte_calendar" model="ir.ui.view">
+        <field name="name">taller.orden.corte.calendar</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <calendar
+                string="Entregas previstas"
+                date_start="fecha_entrega_prevista"
+                color="estado"
+                mode="month">
+
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="cantidad_total_plan"/>
+                <field name="estado"/>
+
+            </calendar>
+
+        </field>
+    </record>
 
 
-<!-- ══════════════════════════════════════════════════
-     ACCIÓN y MENÚ
-     ══════════════════════════════════════════════════ -->
-<record id="action_orden_corte" model="ir.actions.act_window">
-    <field name="name">Órdenes de Corte</field>
-    <field name="res_model">taller.orden.corte</field>
-    <field name="view_mode">kanban,list,form,calendar,pivot,graph</field>
-    <field name="context">{'default_estado': 'ingreso'}</field>
-</record>
+    <!-- =====================================================
+         PIVOT
+         ===================================================== -->
 
-<record id="view_orden_corte_calendar" model="ir.ui.view">
-    <field name="name">taller.orden.corte.calendar</field>
-    <field name="model">taller.orden.corte</field>
-    <field name="arch" type="xml">
-        <calendar string="Órdenes de Corte"
-                  date_start="fecha_entrega"
-                  color="estado"
-                  mode="month">
-            <field name="name"/>
-            <field name="cliente_id"/>
-            <field name="cantidad_total"/>
-        </calendar>
-    </field>
-</record>
+    <record id="view_orden_corte_pivot" model="ir.ui.view">
+        <field name="name">taller.orden.corte.pivot</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
 
-<menuitem id="menu_taller_corte_root"
-          name="Taller de Corte"
-          sequence="10"
-          web_icon="taller_corte,static/description/icon.png"/>
+            <pivot string="Analisis de ordenes de corte">
 
-<menuitem id="menu_ordenes_corte"
-          name="Órdenes de Corte"
-          parent="menu_taller_corte_root"
-          action="action_orden_corte"
-          sequence="1"/>
+                <field name="estado" type="row"/>
+
+                <field
+                    name="fecha_ingreso"
+                    type="col"
+                    interval="month"/>
+
+                <field
+                    name="cantidad_total_plan"
+                    type="measure"/>
+
+            </pivot>
+
+        </field>
+    </record>
+
+
+    <!-- =====================================================
+         GRAFICO
+         ===================================================== -->
+
+    <record id="view_orden_corte_graph" model="ir.ui.view">
+        <field name="name">taller.orden.corte.graph</field>
+        <field name="model">taller.orden.corte</field>
+        <field name="arch" type="xml">
+
+            <graph
+                string="Cantidad por estado"
+                type="bar">
+
+                <field name="estado"/>
+
+                <field
+                    name="cantidad_total_plan"
+                    type="measure"/>
+
+            </graph>
+
+        </field>
+    </record>
+
+
+    <!-- =====================================================
+         ACCION PRINCIPAL
+         ===================================================== -->
+
+    <record id="action_orden_corte" model="ir.actions.act_window">
+        <field name="name">Ordenes de Corte</field>
+        <field name="res_model">taller.orden.corte</field>
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph</field>
+        <field name="search_view_id" ref="view_orden_corte_search"/>
+        <field name="context">{'default_estado': 'ingreso', 'search_default_pendientes': 1}</field>
+    </record>
+
+
+    <!-- =====================================================
+         MENUS
+         ===================================================== -->
+
+    <menuitem
+        id="menu_taller_corte_root"
+        name="Taller de Corte"
+        sequence="10"
+        web_icon="taller_corte,static/description/icon.png"/>
+
+    <menuitem
+        id="menu_ordenes_corte"
+        name="Ordenes de Corte"
+        parent="menu_taller_corte_root"
+        action="action_orden_corte"
+        sequence="1"/>
 
 </odoo>
