@@ -1,9 +1,11 @@
 # 🧵 Taller de Corte — Módulo Odoo 17
 
-Módulo personalizado desarrollado en Odoo 17 Community para la gestión 
-de órdenes de corte de un taller de indumentaria.
+Módulo personalizado desarrollado en **Odoo 17 Community** para digitalizar y gestionar el flujo de producción de un taller de corte de indumentaria.
+
+Centraliza la información operativa del corte y permite hacer seguimiento desde el ingreso de la orden hasta la entrega.
 
 ## 📹 Demo en video
+
 [Ver demo completa en Drive](https://drive.google.com/file/d/1UGDdYbDyVdBCwyGB05hy_4Wyx5i6A3K3/view?usp=sharing)
 
 ## Capturas
@@ -12,68 +14,68 @@ de órdenes de corte de un taller de indumentaria.
 
 [Hoja de Corte PDF](https://drive.google.com/file/d/10v-2Fq0zHm7b88y41oW9UQ9eAjrbdRXx/view?usp=sharing)
 
+> Los enlaces muestran versiones anteriores y parte de la evolución del desarrollo del módulo.
+
 ## ¿Qué hace este módulo?
 
-Digitaliza el flujo de producción de un taller de corte mediante un 
-tablero Kanban con las etapas reales del proceso, reemplazando el 
-seguimiento manual en papel.
+Digitaliza el flujo productivo de un taller de corte mediante un tablero Kanban, órdenes de corte, gestión de tizadas, cálculos automáticos de producción y generación de documentación PDF.
 
 ## Funcionalidades
 
-- Tablero Kanban con 5 etapas del proceso productivo
-- Formulario de orden de corte con campos específicos del taller
-- Tabla de talles con lista desplegable y campo de color
-- Cálculo automático de cantidad total de piezas
-- Tabla de tizadas con cálculo automático de consumo de tela por material
-- Foto de referencia del cliente
-- Generación de hoja de corte en PDF con un solo clic
+- Tablero Kanban con las etapas reales del proceso productivo
+- Formulario de orden de corte
+- Gestión de curva por talle
+- Curvas con valores fraccionarios
+- Cantidades solicitadas por color
+- Distribución automática por talle y color
+- Gestión de múltiples tizadas por material
+- Cálculo de capas y producción planificada
+- Cálculo automático de tela total y consumo por prenda
+- Diferenciación entre color base y color de combinación
+- Historial de cambios de estado
+- Ficha técnica multipágina
+- Generación automática de Hoja de Corte en PDF
+- Inclusión automática de una o dos páginas A4 de Ficha Técnica dentro del PDF
 
 ## Etapas del Kanban
 
-Ingreso Corte → Molderia Digital → En Corte → Cortado/Control → Entregado
+Ingreso Corte → Moldería Digital → Tizada → En Corte → Cortado / Control → Entregado
+
+## Hoja de Corte PDF
+
+El reporte incluye:
+
+- Datos de la orden
+- Curva del pedido
+- Cantidades por color y talle
+- Detalle de tizadas
+- Capas y producción planificada
+- Consumo de tela
+- Notas operativas
+- Ficha Técnica en páginas A4 independientes
 
 ## Stack tecnológico
 
 - Odoo 17 Community Edition
-- Python 3.12
-- XML (vistas QWeb)
-- PostgreSQL 15
+- Python
+- XML / QWeb
+- PostgreSQL
 - wkhtmltopdf 0.12.6
+- Git / GitHub
 
 ## Estructura del módulo
 
+```text
 taller_corte/
-
-├── init.py
-
-├── manifest.py
-
+├── __init__.py
+├── __manifest__.py
 ├── models/
-
-│   ├── init.py
-
+│   ├── __init__.py
 │   └── orden_corte.py
-
 ├── views/
-
 │   └── orden_corte_views.xml
-
 ├── reports/
-
 │   └── reporte_corte.xml
-
+├── data/
 └── security/
-
-└── ir.model.access.csv
-
-## Instalación
-
-1. Clonar este repositorio en la carpeta `custom-addons` de tu instalación de Odoo
-2. Reiniciar Odoo con `--addons-path=addons,custom-addons`
-3. Activar modo desarrollador
-4. Instalar el módulo desde Aplicaciones
-
-## Autora
-
-**Dana Hiden** — Analista de Procesos y Datos | Supply Chain & Operaciones
-[LinkedIn](https://www.linkedin.com/in/danahiden)        
+    └── ir.model.access.csv
