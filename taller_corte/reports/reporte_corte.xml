@@ -48,7 +48,7 @@
             <t t-foreach="docs" t-as="doc">
 
                 <!-- =================================================
-                     PAGINA 1 - ORDEN DE CORTE
+                     PAGINA 1
                      ================================================= -->
 
                 <div
@@ -232,15 +232,11 @@
 
                     <div class="seccion">
 
-                        <table
-                            width="100%"
-                            style="font-size: 11px;">
+                        <table width="100%" style="font-size: 11px;">
 
                             <tr>
 
-                                <td
-                                    width="50%"
-                                    style="vertical-align: top;">
+                                <td width="50%" style="vertical-align: top;">
 
                                     <table width="100%">
 
@@ -252,9 +248,7 @@
                                                     width: 35%;
                                                     padding: 3px 0;
                                                 ">
-
                                                 Cliente:
-
                                             </td>
 
                                             <td
@@ -281,9 +275,7 @@
                                             <td
                                                 class="muted"
                                                 style="padding: 3px 0;">
-
                                                 Molderia:
-
                                             </td>
 
                                             <td
@@ -309,9 +301,7 @@
                                 </td>
 
 
-                                <td
-                                    width="50%"
-                                    style="vertical-align: top;">
+                                <td width="50%" style="vertical-align: top;">
 
                                     <table width="100%">
 
@@ -323,9 +313,7 @@
                                                     width: 45%;
                                                     padding: 3px 0;
                                                 ">
-
                                                 Fecha de ingreso:
-
                                             </td>
 
                                             <td
@@ -333,9 +321,7 @@
                                                     font-weight: bold;
                                                     padding: 3px 0;
                                                 ">
-
                                                 <span t-field="doc.fecha_ingreso"/>
-
                                             </td>
 
                                         </tr>
@@ -346,9 +332,7 @@
                                             <td
                                                 class="muted"
                                                 style="padding: 3px 0;">
-
                                                 Fecha del documento:
-
                                             </td>
 
                                             <td
@@ -356,9 +340,7 @@
                                                     font-weight: bold;
                                                     padding: 3px 0;
                                                 ">
-
                                                 <span t-field="doc.fecha_documento"/>
-
                                             </td>
 
                                         </tr>
@@ -383,7 +365,6 @@
                         <h3 class="titulo-seccion">
                             CURVA DEL PEDIDO
                         </h3>
-
 
                         <table
                             class="tabla"
@@ -419,7 +400,7 @@
                             <tr>
 
                                 <td style="font-weight: bold;">
-                                    Prendas / capa
+                                    Curva
                                 </td>
 
                                 <t
@@ -462,7 +443,6 @@
                         <h3 class="titulo-seccion">
                             CANTIDADES POR COLOR Y TALLE
                         </h3>
-
 
                         <table
                             class="tabla"
@@ -742,8 +722,8 @@
 
                                                 <td>
 
-                                                    <t t-if="capa.pedido_color_id">
-                                                        <span t-field="capa.pedido_color_id.color_tela_id"/>
+                                                    <t t-if="capa.color_base_id">
+                                                        <span t-field="capa.color_base_id"/>
                                                     </t>
 
                                                     <t t-else="">
@@ -754,19 +734,17 @@
 
 
                                                 <td>
-                                                    <span t-field="capa.color_tela_id"/>
+
+                                                    <t t-if="capa.color_tela_id">
+                                                        <span t-field="capa.color_tela_id"/>
+                                                    </t>
+
                                                 </td>
 
 
                                                 <td style="text-align: center;">
 
-                                                    <t t-if="capa.pedido_color_id">
-                                                        <span t-field="capa.pedido_color_id.cantidad_prendas"/>
-                                                    </t>
-
-                                                    <t t-else="">
-                                                        -
-                                                    </t>
+                                                    <t t-esc="capa.cantidad_pedida"/>
 
                                                 </td>
 
@@ -792,8 +770,7 @@
                                                     <t t-if="capa.diferencia &gt; 0">
 
                                                         <span class="positivo">
-                                                            Sobran
-                                                            <t t-esc="capa.diferencia"/>
+                                                            +<t t-esc="capa.diferencia"/>
                                                         </span>
 
                                                     </t>
@@ -801,8 +778,7 @@
                                                     <t t-elif="capa.diferencia &lt; 0">
 
                                                         <span class="negativo">
-                                                            Faltan
-                                                            <t t-esc="-capa.diferencia"/>
+                                                            <t t-esc="capa.diferencia"/>
                                                         </span>
 
                                                     </t>

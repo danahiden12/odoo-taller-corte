@@ -21,6 +21,10 @@
         'reports/reporte_corte.xml',
     ],
 
+    'demo': [
+        'demo/demo_data.xml',
+    ],
+
     'installable': True,
     'auto_install': False,
 }

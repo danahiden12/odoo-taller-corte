@@ -168,7 +168,7 @@
 
 
     <!-- =====================================================
-         VISTA FORMULARIO
+         FORMULARIO
          ===================================================== -->
 
     <record id="view_orden_corte_form" model="ir.ui.view">
@@ -177,10 +177,6 @@
         <field name="arch" type="xml">
 
             <form string="Orden de Corte">
-
-                <!-- =================================================
-                     CABECERA
-                     ================================================= -->
 
                 <header>
 
@@ -230,10 +226,6 @@
 
                 <sheet>
 
-                    <!-- =================================================
-                         ADVERTENCIA GENERAL
-                         ================================================= -->
-
                     <div
                         class="alert alert-warning"
                         role="alert"
@@ -259,22 +251,14 @@
                     </div>
 
 
-                    <!-- =================================================
-                         DATOS GENERALES
-                         ================================================= -->
-
                     <group>
 
                         <group string="Datos de la orden">
 
                             <field name="name"/>
-
                             <field name="molderia"/>
-
                             <field name="cliente_id"/>
-
                             <field name="fecha_ingreso"/>
-
                             <field name="fecha_entrega_prevista"/>
 
                             <field
@@ -283,10 +267,6 @@
 
                         </group>
 
-
-                        <!-- =================================================
-                             FICHA TECNICA
-                             ================================================= -->
 
                         <group string="Ficha tecnica" col="2">
 
@@ -316,10 +296,6 @@
                     </group>
 
 
-                    <!-- =================================================
-                         PESTAÑAS
-                         ================================================= -->
-
                     <notebook>
 
 
@@ -343,12 +319,12 @@
 
                             <group>
 
-                                <group string="1. Curva por capa">
+                                <group string="1. Curva">
 
                                     <div class="text-muted mb-2">
 
-                                        Indique cuantas prendas de cada talle
-                                        salen por capa.
+                                        Indique cuantas veces entra cada talle
+                                        dentro de la curva.
 
                                         Se permiten valores fraccionarios.
 
@@ -371,6 +347,7 @@
 
                                             <field
                                                 name="cantidad_base"
+                                                string="Curva"
                                                 digits="[10,2]"/>
 
                                         </tree>
@@ -392,9 +369,6 @@
 
                                         Indique solamente la cantidad
                                         solicitada por el cliente para cada color.
-
-                                        Las capas se propondran despues
-                                        automaticamente dentro de cada tizada.
 
                                     </div>
 
@@ -450,9 +424,7 @@
                                     delete="false">
 
                                     <field name="color_tela_id"/>
-
                                     <field name="talle"/>
-
                                     <field name="cantidad"/>
 
                                 </tree>
@@ -481,19 +453,15 @@
                             <div class="alert alert-info" role="alert">
 
                                 Cree una tizada por material.
-
-                                La curva y las capas se proponen desde el pedido.
-                                Despues puede cambiar colores, capas,
-                                ancho y largo segun lo que ocurra
-                                realmente durante el corte.
+                                Los datos del pedido se cargan
+                                automaticamente.
 
                             </div>
 
 
                             <field
                                 name="lineas_tizada_ids"
-                                nolabel="1"
-                                context="{'default_orden_id': id}">
+                                nolabel="1">
 
                                 <tree>
 
@@ -533,25 +501,6 @@
                                         <field
                                             name="orden_id"
                                             invisible="1"/>
-
-
-                                        <div class="d-flex gap-2 mb-3">
-
-                                            <button
-                                                name="action_proponer_desde_pedido"
-                                                string="Volver a proponer desde pedido"
-                                                type="object"
-                                                class="btn-secondary"
-                                                icon="fa-magic"/>
-
-                                            <button
-                                                name="action_duplicar_tizada"
-                                                string="Duplicar tizada"
-                                                type="object"
-                                                class="btn-secondary"
-                                                icon="fa-copy"/>
-
-                                        </div>
 
 
                                         <div
@@ -619,63 +568,7 @@
 
                                         <notebook>
 
-                                            <page string="Curva">
-
-                                                <div class="alert alert-light" role="alert">
-
-                                                    Esta curva se copia del pedido.
-
-                                                    Modifiquela solamente cuando
-                                                    esta tizada sea una excepcion.
-
-                                                    Las cantidades fraccionarias,
-                                                    como 0,5, se calculan siempre
-                                                    redondeando la produccion
-                                                    hacia abajo.
-
-                                                </div>
-
-
-                                                <field
-                                                    name="curva_ids"
-                                                    nolabel="1">
-
-                                                    <tree editable="bottom">
-
-                                                        <field name="talle"/>
-
-                                                        <field
-                                                            name="cantidad_por_capa"
-                                                            digits="[10,2]"/>
-
-                                                    </tree>
-
-                                                </field>
-
-                                            </page>
-
-
                                             <page string="Colores y capas">
-
-                                                <div class="alert alert-light" role="alert">
-
-                                                    Odoo propone las capas utilizando
-                                                    las cantidades del pedido.
-
-                                                    "Color base" identifica el color
-                                                    principal solicitado por el cliente.
-
-                                                    "Color de combinacion" indica el color
-                                                    que corresponde a esta tela o material.
-
-                                                    Ejemplo:
-                                                    Negro base → Violeta de forreria.
-
-                                                    Las capas pueden modificarse
-                                                    antes o durante el corte.
-
-                                                </div>
-
 
                                                 <field
                                                     name="capas_color_ids"
@@ -685,8 +578,20 @@
 
                                                         <field
                                                             name="pedido_color_id"
+                                                            column_invisible="True"/>
+
+                                                        <field
+                                                            name="color_base_carga_id"
+                                                            column_invisible="True"/>
+
+                                                        <field
+                                                            name="cantidad_pedida_carga"
+                                                            column_invisible="True"/>
+
+                                                        <field
+                                                            name="color_base_id"
                                                             string="Color base"
-                                                            domain="[('orden_id', '=', parent.orden_id)]"/>
+                                                            readonly="1"/>
 
                                                         <field
                                                             name="color_tela_id"
@@ -736,17 +641,6 @@
 
                         <page string="Notas">
 
-                            <div class="text-muted mb-2">
-
-                                Use este espacio para instrucciones
-                                especiales del corte.
-
-                                Ejemplo:
-                                Separar 5 metros de cada variante
-                                para collareta.
-
-                            </div>
-
                             <field
                                 name="notas"
                                 placeholder="Instrucciones especiales, observaciones..."
@@ -761,14 +655,6 @@
 
                         <page string="Historial">
 
-                            <div class="text-muted mb-2">
-
-                                Registro automatico de los cambios
-                                de estado de la orden.
-
-                            </div>
-
-
                             <field
                                 name="historial_ids"
                                 nolabel="1"
@@ -780,13 +666,9 @@
                                     delete="false">
 
                                     <field name="estado_anterior"/>
-
                                     <field name="estado"/>
-
                                     <field name="fecha_inicio"/>
-
                                     <field name="fecha_fin"/>
-
                                     <field name="usuario_id"/>
 
                                 </tree>
@@ -809,7 +691,7 @@
 
 
     <!-- =====================================================
-         VISTA LISTA
+         LISTA
          ===================================================== -->
 
     <record id="view_orden_corte_list" model="ir.ui.view">
@@ -990,7 +872,7 @@
 
 
     <!-- =====================================================
-         ACCION PRINCIPAL
+         ACCION
          ===================================================== -->
 
     <record id="action_orden_corte" model="ir.actions.act_window">

@@ -136,14 +136,10 @@ class CurvaPedido(models.Model):
     )
 
     cantidad_base = fields.Float(
-        string='Prendas por capa',
+        string='Curva',
         required=True,
         default=1.0,
         digits=(10, 2),
-        help=(
-            'Cantidad de prendas de este talle por capa. '
-            'Puede utilizar valores como 0,5.'
-        ),
     )
 
     _sql_constraints = [
@@ -160,7 +156,7 @@ class CurvaPedido(models.Model):
             if linea.cantidad_base <= 0:
                 raise ValidationError(
                     _(
-                        'La cantidad de prendas por capa '
+                        'La cantidad de la curva '
                         'debe ser mayor que cero.'
                     )
                 )
@@ -304,7 +300,7 @@ class LineaTalle(models.Model):
 
 
 # ============================================================
-# CURVA DE TIZADA
+# CURVA INTERNA DE TIZADA
 # ============================================================
 
 
@@ -328,7 +324,7 @@ class LineaCurvaTizada(models.Model):
     )
 
     cantidad_por_capa = fields.Float(
-        string='Prendas por capa',
+        string='Curva',
         required=True,
         default=1.0,
         digits=(10, 2),
@@ -348,8 +344,8 @@ class LineaCurvaTizada(models.Model):
             if linea.cantidad_por_capa <= 0:
                 raise ValidationError(
                     _(
-                        'Las prendas por capa '
-                        'deben ser mayores que cero.'
+                        'La cantidad de la curva '
+                        'debe ser mayor que cero.'
                     )
                 )
 
@@ -377,23 +373,36 @@ class CapaColorTizada(models.Model):
         string='Color del pedido',
         index=True,
         ondelete='cascade',
-        help=(
-            'Color original del pedido al que corresponde '
-            'esta tela.'
-        ),
     )
 
-    color_tela_id = fields.Many2one(
+    color_base_carga_id = fields.Many2one(
         'taller.color.tela',
-        string='Color de esta tela',
-        required=True,
+        string='Color base de carga',
         index=True,
+    )
+
+    cantidad_pedida_carga = fields.Integer(
+        string='Cantidad pedida de carga',
+        default=0,
+    )
+
+    color_base_id = fields.Many2one(
+        'taller.color.tela',
+        string='Color base',
+        compute='_compute_datos_pedido',
+        readonly=True,
     )
 
     cantidad_pedida = fields.Integer(
         string='Cantidad pedida',
-        related='pedido_color_id.cantidad_prendas',
+        compute='_compute_datos_pedido',
         readonly=True,
+    )
+
+    color_tela_id = fields.Many2one(
+        'taller.color.tela',
+        string='Color de combinacion',
+        index=True,
     )
 
     cantidad_capas = fields.Integer(
@@ -423,8 +432,33 @@ class CapaColorTizada(models.Model):
     ]
 
     @api.depends(
+        'pedido_color_id',
+        'pedido_color_id.color_tela_id',
+        'pedido_color_id.cantidad_prendas',
+        'color_base_carga_id',
+        'cantidad_pedida_carga',
+    )
+    def _compute_datos_pedido(self):
+        for linea in self:
+            if linea.pedido_color_id:
+                linea.color_base_id = (
+                    linea.pedido_color_id.color_tela_id
+                )
+                linea.cantidad_pedida = (
+                    linea.pedido_color_id.cantidad_prendas
+                )
+            else:
+                linea.color_base_id = (
+                    linea.color_base_carga_id
+                )
+                linea.cantidad_pedida = (
+                    linea.cantidad_pedida_carga
+                )
+
+    @api.depends(
         'cantidad_capas',
         'pedido_color_id.cantidad_prendas',
+        'cantidad_pedida_carga',
         'tizada_id.curva_ids.cantidad_por_capa',
     )
     def _compute_resultado_color(self):
@@ -440,20 +474,19 @@ class CapaColorTizada(models.Model):
             linea.cantidad_producida = producido
 
             if linea.pedido_color_id:
-                linea.diferencia = (
-                    producido
-                    - linea.pedido_color_id.cantidad_prendas
+                cantidad_pedida = (
+                    linea.pedido_color_id.cantidad_prendas
                 )
             else:
-                linea.diferencia = 0
-
-    @api.onchange('pedido_color_id')
-    def _onchange_pedido_color(self):
-        for linea in self:
-            if linea.pedido_color_id:
-                linea.color_tela_id = (
-                    linea.pedido_color_id.color_tela_id
+                cantidad_pedida = (
+                    linea.cantidad_pedida_carga
                 )
+
+            linea.diferencia = (
+                producido - cantidad_pedida
+                if cantidad_pedida
+                else 0
+            )
 
     @api.constrains('cantidad_capas')
     def _check_cantidad_capas(self):
@@ -508,7 +541,7 @@ class LineaTizada(models.Model):
     curva_ids = fields.One2many(
         'taller.linea.curva.tizada',
         'tizada_id',
-        string='Curva por capa',
+        string='Curva interna',
     )
 
     capas_color_ids = fields.One2many(
@@ -595,8 +628,9 @@ class LineaTizada(models.Model):
 
     @api.depends(
         'capas_color_ids.pedido_color_id',
+        'capas_color_ids.color_base_carga_id',
+        'capas_color_ids.cantidad_pedida_carga',
         'capas_color_ids.color_tela_id',
-        'capas_color_ids.cantidad_pedida',
         'capas_color_ids.cantidad_producida',
         'capas_color_ids.diferencia',
     )
@@ -606,15 +640,13 @@ class LineaTizada(models.Model):
 
             for linea in tizada.capas_color_ids:
                 if (
-                    not linea.pedido_color_id
+                    not linea.color_base_id
                     or linea.diferencia == 0
                 ):
                     continue
 
                 color_pedido = (
-                    linea.pedido_color_id
-                    .color_tela_id
-                    .display_name
+                    linea.color_base_id.display_name
                 )
 
                 color_material = (
@@ -702,6 +734,9 @@ class LineaTizada(models.Model):
         capas = []
 
         for color in orden.colores_pedido_ids:
+            if not color.color_tela_id:
+                continue
+
             cantidad_capas = (
                 orden._calcular_capas_propuestas(
                     color.cantidad_prendas
@@ -718,10 +753,13 @@ class LineaTizada(models.Model):
                     0,
                     0,
                     {
-                        'pedido_color_id': color.id,
-                        'color_tela_id': (
+                        'color_base_carga_id': (
                             color.color_tela_id.id
                         ),
+                        'cantidad_pedida_carga': (
+                            color.cantidad_prendas
+                        ),
+                        'color_tela_id': False,
                         'cantidad_capas': cantidad_capas,
                     },
                 )
@@ -738,8 +776,79 @@ class LineaTizada(models.Model):
             ],
         }
 
-    @api.onchange('orden_id')
-    def _onchange_orden_id(self):
+    def _completar_datos_pedido_faltantes(self):
+        for tizada in self:
+            orden = tizada.orden_id
+
+            if not orden:
+                continue
+
+            valores = {}
+
+            if (
+                not tizada.curva_ids
+                and orden.curva_pedido_ids
+            ):
+                valores['curva_ids'] = [
+                    (
+                        0,
+                        0,
+                        {
+                            'talle': linea.talle,
+                            'cantidad_por_capa': linea.cantidad_base,
+                        },
+                    )
+                    for linea in orden.curva_pedido_ids
+                ]
+
+            if (
+                not tizada.capas_color_ids
+                and orden.curva_pedido_ids
+                and orden.colores_pedido_ids
+            ):
+                capas = []
+
+                for color in orden.colores_pedido_ids:
+                    if not color.color_tela_id:
+                        continue
+
+                    cantidad_capas = (
+                        orden._calcular_capas_propuestas(
+                            color.cantidad_prendas
+                        )
+                    )
+
+                    cantidad_capas = max(
+                        1,
+                        cantidad_capas,
+                    )
+
+                    capas.append(
+                        (
+                            0,
+                            0,
+                            {
+                                'color_base_carga_id': (
+                                    color.color_tela_id.id
+                                ),
+                                'cantidad_pedida_carga': (
+                                    color.cantidad_prendas
+                                ),
+                                'color_tela_id': False,
+                                'cantidad_capas': cantidad_capas,
+                            },
+                        )
+                    )
+
+                if capas:
+                    valores['capas_color_ids'] = capas
+
+            if valores:
+                tizada.write(valores)
+
+        return True
+
+    def _cargar_datos_pedido_en_memoria(self):
         for tizada in self:
             if (
                 tizada.orden_id
@@ -753,58 +862,83 @@ class LineaTizada(models.Model):
                 if valores:
                     tizada.update(valores)
 
+    @api.onchange(
+        'orden_id',
+        'tipo_tela',
+    )
+    def _onchange_datos_tizada(self):
+        self._cargar_datos_pedido_en_memoria()
+
+    def _vincular_colores_pedido(self):
+        for tizada in self:
+            if not tizada.orden_id:
+                continue
+
+            for capa in tizada.capas_color_ids:
+                color_base = (
+                    capa.color_base_carga_id
+                    or (
+                        capa.pedido_color_id.color_tela_id
+                        if capa.pedido_color_id
+                        else False
+                    )
+                )
+
+                if not color_base:
+                    continue
+
+                pedido_color = (
+                    tizada.orden_id.colores_pedido_ids.filtered(
+                        lambda pedido: (
+                            pedido.color_tela_id.id
+                            == color_base.id
+                        )
+                    )[:1]
+                )
+
+                if not pedido_color:
+                    continue
+
+                valores = {}
+
+                if (
+                    capa.pedido_color_id
+                    != pedido_color
+                ):
+                    valores['pedido_color_id'] = (
+                        pedido_color.id
+                    )
+
+                if (
+                    capa.color_base_carga_id
+                    != pedido_color.color_tela_id
+                ):
+                    valores['color_base_carga_id'] = (
+                        pedido_color.color_tela_id.id
+                    )
+
+                if (
+                    capa.cantidad_pedida_carga
+                    != pedido_color.cantidad_prendas
+                ):
+                    valores['cantidad_pedida_carga'] = (
+                        pedido_color.cantidad_prendas
+                    )
+
+                if valores:
+                    capa.write(valores)
+
+        return True
+
     @api.model_create_multi
     def create(self, vals_list):
         tizadas = super().create(vals_list)
 
         for tizada in tizadas:
-            if (
-                not tizada.curva_ids
-                and not tizada.capas_color_ids
-                and tizada.orden_id
-            ):
-                valores = (
-                    tizada._valores_propuesta_pedido()
-                )
-
-                if valores:
-                    tizada.write(valores)
+            tizada._completar_datos_pedido_faltantes()
+            tizada._vincular_colores_pedido()
 
         return tizadas
-
-    def action_proponer_desde_pedido(self):
-        for tizada in self:
-            valores = (
-                tizada._valores_propuesta_pedido()
-            )
-
-            if not valores:
-                raise ValidationError(
-                    _(
-                        'Primero cargue la curva y las cantidades '
-                        'por color del pedido.'
-                    )
-                )
-
-            tizada.write(valores)
-
-        return True
-
-    def action_duplicar_tizada(self):
-        self.ensure_one()
-
-        nueva_tizada = self.copy({
-            'orden_id': self.orden_id.id,
-        })
-
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Orden de Corte'),
-            'res_model': 'taller.orden.corte',
-            'res_id': nueva_tizada.orden_id.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
 
 
 # ============================================================
@@ -955,14 +1089,10 @@ class OrdenCorte(models.Model):
         compute='_compute_fecha_documento',
     )
 
-    # --------------------------------------------------------
-    # PLAN DEL PEDIDO
-    # --------------------------------------------------------
-
     curva_pedido_ids = fields.One2many(
         'taller.orden.curva.pedido',
         'orden_id',
-        string='Curva por capa',
+        string='Curva',
     )
 
     colores_pedido_ids = fields.One2many(
@@ -972,7 +1102,7 @@ class OrdenCorte(models.Model):
     )
 
     prendas_por_capa_plan = fields.Float(
-        string='Prendas por capa',
+        string='Curva total teorica',
         compute='_compute_totales_plan',
         digits=(10, 2),
     )
@@ -981,10 +1111,6 @@ class OrdenCorte(models.Model):
         string='Total pedido',
         compute='_compute_totales_plan',
     )
-
-    # --------------------------------------------------------
-    # DISTRIBUCION BASE
-    # --------------------------------------------------------
 
     lineas_talle_ids = fields.One2many(
         'taller.linea.talle',
@@ -999,10 +1125,6 @@ class OrdenCorte(models.Model):
         tracking=True,
     )
 
-    # --------------------------------------------------------
-    # TIZADAS
-    # --------------------------------------------------------
-
     lineas_tizada_ids = fields.One2many(
         'taller.linea.tizada',
         'orden_id',
@@ -1013,20 +1135,12 @@ class OrdenCorte(models.Model):
         string='Notas / Instrucciones especiales',
     )
 
-    # --------------------------------------------------------
-    # FICHA TECNICA
-    # --------------------------------------------------------
-
-    # Pagina 1.
-    # Conservamos el nombre tecnico foto_referencia
-    # para no perder las fichas ya cargadas.
     foto_referencia = fields.Image(
         string='Ficha tecnica - Pagina 1',
         max_width=3508,
         max_height=3508,
     )
 
-    # Pagina 2 opcional.
     ficha_tecnica_pagina_2 = fields.Image(
         string='Ficha tecnica - Pagina 2',
         max_width=3508,
@@ -1060,10 +1174,6 @@ class OrdenCorte(models.Model):
         string='Advertencia de produccion',
         compute='_compute_advertencia_produccion',
     )
-
-    # --------------------------------------------------------
-    # CAMPOS CALCULADOS
-    # --------------------------------------------------------
 
     @api.model
     def _read_group_estado(
@@ -1154,7 +1264,7 @@ class OrdenCorte(models.Model):
             )
 
     # --------------------------------------------------------
-    # CALCULO DE PRODUCCION BASE
+    # PRODUCCION BASE
     # --------------------------------------------------------
 
     def _produccion_plan_con_capas(
@@ -1219,62 +1329,85 @@ class OrdenCorte(models.Model):
 
         return cantidad_capas
 
-    def _regenerar_distribucion_plan(self):
-        for orden in self:
-            comandos = [
-                (5, 0, 0),
-            ]
+    def _comandos_distribucion_plan(self):
+        self.ensure_one()
 
+        comandos = [
+            (5, 0, 0),
+        ]
+
+        if (
+            not self.curva_pedido_ids
+            or not self.colores_pedido_ids
+        ):
+            return comandos
+
+        for color in self.colores_pedido_ids:
             if (
-                not orden.curva_pedido_ids
-                or not orden.colores_pedido_ids
+                not color.color_tela_id
+                or color.cantidad_prendas <= 0
             ):
-                super(
-                    OrdenCorte,
-                    orden,
-                ).write({
-                    'lineas_talle_ids': comandos,
-                })
                 continue
 
-            for color in orden.colores_pedido_ids:
-                capas = (
-                    orden._calcular_capas_propuestas(
-                        color.cantidad_prendas
+            capas = self._calcular_capas_propuestas(
+                color.cantidad_prendas
+            )
+
+            for curva in self.curva_pedido_ids:
+                if (
+                    not curva.talle
+                    or curva.cantidad_base <= 0
+                ):
+                    continue
+
+                cantidad = floor(
+                    curva.cantidad_base
+                    * capas
+                )
+
+                if cantidad <= 0:
+                    continue
+
+                comandos.append(
+                    (
+                        0,
+                        0,
+                        {
+                            'talle': curva.talle,
+                            'color_tela_id': (
+                                color.color_tela_id.id
+                            ),
+                            'cantidad': cantidad,
+                        },
                     )
                 )
 
-                for curva in orden.curva_pedido_ids:
-                    cantidad = floor(
-                        curva.cantidad_base
-                        * capas
-                    )
+        return comandos
 
-                    if cantidad <= 0:
-                        continue
-
-                    comandos.append(
-                        (
-                            0,
-                            0,
-                            {
-                                'talle': curva.talle,
-                                'color_tela_id': (
-                                    color.color_tela_id.id
-                                ),
-                                'cantidad': cantidad,
-                            },
-                        )
-                    )
-
+    def _regenerar_distribucion_plan(self):
+        for orden in self:
             super(
                 OrdenCorte,
                 orden,
             ).write({
-                'lineas_talle_ids': comandos,
+                'lineas_talle_ids': (
+                    orden._comandos_distribucion_plan()
+                ),
             })
 
         return True
+
+    @api.onchange(
+        'curva_pedido_ids',
+        'colores_pedido_ids',
+    )
+    def _onchange_plan_pedido(self):
+        for orden in self:
+            orden.update({
+                'lineas_talle_ids': (
+                    orden._comandos_distribucion_plan()
+                ),
+            })
 
     def action_generar_cantidades_desde_plan(self):
         for orden in self:
@@ -1294,7 +1427,7 @@ class OrdenCorte(models.Model):
         return self._regenerar_distribucion_plan()
 
     # --------------------------------------------------------
-    # METODOS AUXILIARES PARA PDF
+    # PDF
     # --------------------------------------------------------
 
     def cantidad_planificada_talle_color(
@@ -1609,6 +1742,9 @@ class OrdenCorte(models.Model):
         for orden in ordenes:
             orden._regenerar_distribucion_plan()
 
+            orden.lineas_tizada_ids._completar_datos_pedido_faltantes()
+            orden.lineas_tizada_ids._vincular_colores_pedido()
+
             if (
                 orden.estado
                 in ESTADOS_REQUIEREN_CANTIDADES
@@ -1668,6 +1804,14 @@ class OrdenCorte(models.Model):
             ):
                 orden._regenerar_distribucion_plan()
 
+            orden.lineas_tizada_ids._completar_datos_pedido_faltantes()
+
+            if (
+                'colores_pedido_ids' in valores
+                or 'lineas_tizada_ids' in valores
+            ):
+                orden.lineas_tizada_ids._vincular_colores_pedido()
+
             if (
                 orden.estado
                 in ESTADOS_REQUIEREN_CANTIDADES
@@ -1692,7 +1836,7 @@ class OrdenCorte(models.Model):
         return resultado
 
     # --------------------------------------------------------
-    # BOTONES DE ESTADO
+    # ESTADOS
     # --------------------------------------------------------
 
     def _cambiar_estado(self, estado):

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- =====================================================
+         CLIENTE DEMO
+         ===================================================== -->
+
+    <record id="partner_solara_demo" model="res.partner">
+        <field name="name">Solara Demo</field>
+        <field name="company_type">company</field>
+    </record>
+
+
+    <!-- =====================================================
+         ORDEN DEMO
+         ===================================================== -->
+
+    <record id="orden_corte_demo_0001" model="taller.orden.corte">
+        <field name="name">DEMO/0001</field>
+        <field name="molderia">Bikini Bahía Demo</field>
+        <field name="cliente_id" ref="partner_solara_demo"/>
+        <field name="fecha_ingreso">2026-09-10</field>
+        <field name="fecha_entrega_prevista">2026-09-20</field>
+        <field name="estado">ingreso</field>
+        <field name="notas">Separar 15 metros de tela para collareta.</field>
+    </record>
+
+
+    <!-- =====================================================
+         CURVA DEL PEDIDO
+         S = 2
+         M = 2
+         L = 1
+         XL = 1
+         Total teorico = 6
+         ===================================================== -->
+
+    <record id="demo_curva_s" model="taller.orden.curva.pedido">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">s</field>
+        <field name="cantidad_base">2.0</field>
+    </record>
+
+    <record id="demo_curva_m" model="taller.orden.curva.pedido">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">m</field>
+        <field name="cantidad_base">2.0</field>
+    </record>
+
+    <record id="demo_curva_l" model="taller.orden.curva.pedido">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">l</field>
+        <field name="cantidad_base">1.0</field>
+    </record>
+
+    <record id="demo_curva_xl" model="taller.orden.curva.pedido">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">xl</field>
+        <field name="cantidad_base">1.0</field>
+    </record>
+
+
+    <!-- =====================================================
+         PEDIDO POR COLOR
+         Azul = 150 prendas
+         ===================================================== -->
+
+    <record id="demo_color_pedido_azul" model="taller.orden.color.pedido">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="color_tela_id" ref="color_azul"/>
+        <field name="cantidad_prendas">150</field>
+    </record>
+
+
+    <!-- =====================================================
+         DISTRIBUCION BASE CALCULADA
+         25 capas:
+         S  = 50
+         M  = 50
+         L  = 25
+         XL = 25
+         Total = 150
+         ===================================================== -->
+
+    <record id="demo_distribucion_azul_s" model="taller.linea.talle">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">s</field>
+        <field name="color_tela_id" ref="color_azul"/>
+        <field name="cantidad">50</field>
+    </record>
+
+    <record id="demo_distribucion_azul_m" model="taller.linea.talle">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">m</field>
+        <field name="color_tela_id" ref="color_azul"/>
+        <field name="cantidad">50</field>
+    </record>
+
+    <record id="demo_distribucion_azul_l" model="taller.linea.talle">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">l</field>
+        <field name="color_tela_id" ref="color_azul"/>
+        <field name="cantidad">25</field>
+    </record>
+
+    <record id="demo_distribucion_azul_xl" model="taller.linea.talle">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="talle">xl</field>
+        <field name="color_tela_id" ref="color_azul"/>
+        <field name="cantidad">25</field>
+    </record>
+
+
+    <!-- =====================================================
+         TIZADA 1 - LYCRA
+         Color base: Azul
+         Combinacion: vacio
+         25 capas
+         ===================================================== -->
+
+    <record id="demo_tizada_lycra" model="taller.linea.tizada">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="tipo_tela">lycra</field>
+        <field name="ancho_tizada">1.48</field>
+        <field name="largo_tizada">3.33</field>
+
+        <field name="capas_color_ids"
+               eval="[
+                   (0, 0, {
+                       'pedido_color_id': ref('demo_color_pedido_azul'),
+                       'color_base_carga_id': ref('color_azul'),
+                       'cantidad_pedida_carga': 150,
+                       'color_tela_id': False,
+                       'cantidad_capas': 25
+                   })
+               ]"/>
+    </record>
+
+
+    <!-- =====================================================
+         TIZADA 2 - FORRERIA
+         Color base: Azul
+         Combinacion: Blanco
+         25 capas
+         ===================================================== -->
+
+    <record id="demo_tizada_forreria" model="taller.linea.tizada">
+        <field name="orden_id" ref="orden_corte_demo_0001"/>
+        <field name="tipo_tela">forreria</field>
+        <field name="ancho_tizada">1.55</field>
+        <field name="largo_tizada">2.12</field>
+
+        <field name="capas_color_ids"
+               eval="[
+                   (0, 0, {
+                       'pedido_color_id': ref('demo_color_pedido_azul'),
+                       'color_base_carga_id': ref('color_azul'),
+                       'cantidad_pedida_carga': 150,
+                       'color_tela_id': ref('color_blanco'),
+                       'cantidad_capas': 25
+                   })
+               ]"/>
+    </record>
+
+</odoo>
