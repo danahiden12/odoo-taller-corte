@@ -1,81 +1,74 @@
-# 🧵 Taller de Corte — Módulo Odoo 17
+# 🧵 Taller de Corte — Odoo 17 Community
 
-Módulo personalizado desarrollado en **Odoo 17 Community** para digitalizar y gestionar el flujo de producción de un taller de corte de indumentaria.
+Módulo desarrollado en **Odoo 17 Community** para digitalizar y ordenar el flujo productivo de un taller de corte de indumentaria.
 
-Centraliza la información operativa del corte y permite hacer seguimiento desde el ingreso de la orden hasta la entrega.
+## Objetivo
 
-## 📹 Demo en video
+El proyecto buscó centralizar en Odoo la gestión de órdenes de corte, reemplazando procesos manuales y dispersos.
+La idea fue poder cargar en una sola orden:
 
-[Ver demo completa en Drive](https://drive.google.com/file/d/1UGDdYbDyVdBCwyGB05hy_4Wyx5i6A3K3/view?usp=sharing)
+- curva por talle;
+- cantidades pedidas por color;
+- distribución automática;
+- múltiples tizadas;
+- capas de corte;
+- consumo de tela;
+- color base y color de combinación;
+- seguimiento por estados;
+- y generación de Hoja de Corte en PDF.
 
-## Capturas
+## Resultado
 
-[Tablero Kanban](https://docs.google.com/presentation/d/1a1E5nCD8DrxradPdkdzeK1H5WJX6595P2i-d6xggnuk/edit?slide=id.p#slide=id.p)
+El módulo permite gestionar el proceso completo:
+`Ingreso Corte → Moldería Digital → Tizada → En Corte → Cortado / Control → Entregado`
 
-[Hoja de Corte PDF](https://drive.google.com/file/d/10v-2Fq0zHm7b88y41oW9UQ9eAjrbdRXx/view?usp=sharing)
+También incluye cálculos automáticos de producción, soporte para curvas fraccionarias, diferencias entre pedido y producción, historial de estados, ficha técnica multipágina y PDF final de corte.
+La carga puede completarse antes de guardar la orden, y al finalizar se asigna automáticamente el número de Orden de Corte.
 
-> Los enlaces muestran versiones anteriores y parte de la evolución del desarrollo del módulo.
+---
 
-## ¿Qué hace este módulo?
+## Demo incluida
 
-Digitaliza el flujo productivo de un taller de corte mediante un tablero Kanban, órdenes de corte, gestión de tizadas, cálculos automáticos de producción y generación de documentación PDF.
+El repositorio incluye datos de demostración con una orden:
+`DEMO/0001`
 
-## Funcionalidades
+La demo contiene:
 
-- Tablero Kanban con las etapas reales del proceso productivo
-- Formulario de orden de corte
-- Gestión de curva por talle
-- Curvas con valores fraccionarios
-- Cantidades solicitadas por color
-- Distribución automática por talle y color
-- Gestión de múltiples tizadas por material
-- Cálculo de capas y producción planificada
-- Cálculo automático de tela total y consumo por prenda
-- Diferenciación entre color base y color de combinación
-- Historial de cambios de estado
-- Ficha técnica multipágina
-- Generación automática de Hoja de Corte en PDF
-- Inclusión automática de una o dos páginas A4 de Ficha Técnica dentro del PDF
+- cliente de ejemplo;
+- curva por talles;
+- pedido por color;
+- distribución automática;
+- tizada de Lycra;
+- tizada de Forrería;
+- color base y color de combinación;
+- cálculo de capas, producción y consumo.
 
-## Etapas del Kanban
+---
 
-Ingreso Corte → Moldería Digital → Tizada → En Corte → Cortado / Control → Entregado
+## Cómo probarlo
 
-## Hoja de Corte PDF
+Clonar el repositorio:
 
-El reporte incluye:
+```bash
+git clone https://github.com/danahiden12/odoo-taller-corte.git
 
-- Datos de la orden
-- Curva del pedido
-- Cantidades por color y talle
-- Detalle de tizadas
-- Capas y producción planificada
-- Consumo de tela
-- Notas operativas
-- Ficha Técnica en páginas A4 independientes
+Copiar el módulo dentro de los addons personalizados de Odoo:
+odoo/
+└── custom-addons/
+    └── taller_corte/
 
-## Stack tecnológico
+Agregar la carpeta al addons_path:
+addons_path = addons,custom-addons
 
-- Odoo 17 Community Edition
-- Python
-- XML / QWeb
-- PostgreSQL
-- wkhtmltopdf 0.12.6
-- Git / GitHub
+Crear una base de datos con datos de demostración habilitados e instalar el módulo Taller de Corte.
+```bash
+python odoo-bin \
+-r USUARIO_POSTGRES \
+-w PASSWORD_POSTGRES \
+--addons-path=addons,custom-addons \
+-d NOMBRE_BASE \
+-i taller_corte \
+--stop-after-init
 
-## Estructura del módulo
-
-```text
-taller_corte/
-├── __init__.py
-├── __manifest__.py
-├── models/
-│   ├── __init__.py
-│   └── orden_corte.py
-├── views/
-│   └── orden_corte_views.xml
-├── reports/
-│   └── reporte_corte.xml
-├── data/
-└── security/
-    └── ir.model.access.csv
+Al ingresar a Odoo debería aparecer la orden: DEMO/0001
+lista para recorrer y probar las principales funcionalidades del módulo.
