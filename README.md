@@ -53,6 +53,7 @@ Clonar el repositorio:
 git clone https://github.com/danahiden12/odoo-taller-corte.git
 
 Copiar el módulo dentro de los addons personalizados de Odoo:
+
 odoo/
 └── custom-addons/
     └── taller_corte/
@@ -61,7 +62,7 @@ Agregar la carpeta al addons_path:
 addons_path = addons,custom-addons
 
 Crear una base de datos con datos de demostración habilitados e instalar el módulo Taller de Corte.
-```bash
+
 python odoo-bin \
 -r USUARIO_POSTGRES \
 -w PASSWORD_POSTGRES \
